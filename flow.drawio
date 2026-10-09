@@ -131,7 +131,7 @@
           <mxGeometry height="80" width="190" x="15" y="400" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=top;container=1;" value="&lt;h2&gt;Equipment Code Checking Process&lt;/h2&gt;" vertex="1">
-          <mxGeometry height="610" width="700" x="-800" y="-60" as="geometry" />
+          <mxGeometry height="850" width="700" x="-800" y="-60" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-13" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.179;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" target="E50qB_bewiRri_-YFIzX-7">
           <mxGeometry relative="1" as="geometry" />
@@ -175,17 +175,44 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-9" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Found" vertex="1">
           <mxGeometry height="40" width="61.72" x="409" y="330" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-21" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-12">
+        <mxCell id="E50qB_bewiRri_-YFIzX-21" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="misc-query">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-10" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Not Found" vertex="1">
           <mxGeometry height="40" width="92" x="547" y="330" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-11" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True" vertex="1">
-          <mxGeometry height="60" width="120" x="120" y="440" as="geometry" />
+          <mxGeometry height="60" width="120" x="120" y="730" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-12" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False" vertex="1">
-          <mxGeometry height="60" width="120" x="533" y="440" as="geometry" />
+          <mxGeometry height="60" width="120" x="533" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-query" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Query Appendix B using the same &quot;Function or Status Code&quot; (without Device ID if extracted), where &quot;Equipment Code&quot; is missing, null or an empty string." vertex="1">
+          <mxGeometry height="80" width="300" x="385" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-query-found" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-query" target="misc-found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.2;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-query-not-found" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-query" target="misc-not-found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.8;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-found" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;" value="Found" vertex="1">
+          <mxGeometry height="40" width="70" x="410" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-not-found" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;" value="Not Found" vertex="1">
+          <mxGeometry height="40" width="92" x="579" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-found-mapping" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-found" target="misc-mapping" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-mapping" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Get &quot;System&quot; and &quot;iBMS Parameters&quot; from the matched Appendix B record. Set the schema Equipment key to &quot;MISC&quot; (not the record's Equipment name)." vertex="1">
+          <mxGeometry height="80" width="240" x="325" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-mapping-true" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-mapping" target="E50qB_bewiRri_-YFIzX-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="misc-not-found-false" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-not-found" target="E50qB_bewiRri_-YFIzX-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.75;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-22" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.003;entryY=0.456;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-2">
           <mxGeometry relative="1" x="0.0015" as="geometry" />
@@ -285,7 +312,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-64" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Get the &quot;Equipment&quot;, &quot;System&quot;, &quot;Device ID&quot;(if have) and &quot;iBMS Parameters&quot; in Appendix B and get the &quot;point name (without function code)&quot;, &quot;Building &amp;amp; Block Code&quot; and &quot;Point Name&quot; in the CSV file." vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-64" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Get &quot;System&quot; and &quot;iBMS Parameters&quot; from Appendix B. Use its &quot;Equipment&quot;, or &quot;MISC&quot; for the missing/empty Equipment Code fallback. Keep the extracted Device ID (if any). Get &quot;point name (without function code)&quot;, &quot;Building &amp;amp; Block Code&quot; and &quot;Point Name&quot; from CSV." vertex="1">
           <mxGeometry height="69.8" width="590" x="10" y="105.84" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-77" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-70">
