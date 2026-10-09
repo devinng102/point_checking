@@ -1,0 +1,40 @@
+flowchart TD
+    START["輸入 CSV 的<br/>&quot;Equipment Code / System / Room Code&quot;<br/>及 derived Function Code"]
+
+    EXACT["查 &quot;appendix_b&quot;<br/>&quot;Equipment Code&quot; 精確匹配<br/>&quot;Function or Status Code&quot;：<br/>精確 → slash-token RegExp"]
+    EXACT_FOUND{"找到？"}
+
+    NAME["取得映射的 &quot;Equipment&quot; 名稱<br/>再查 &quot;Equipment&quot; +<br/>&quot;Function or Status Code&quot;<br/>保留候選映射"]
+
+    REGEX["查 &quot;appendix_b&quot;<br/>RegExp 匹配 &quot;Equipment Code&quot;<br/>&quot;Function or Status Code&quot;：<br/>精確 → slash-token RegExp"]
+    REGEX_FOUND{"找到？"}
+
+    MISC_QUERY["查 &quot;appendix_b&quot;<br/>&quot;Equipment Code&quot; 不存在、null 或空字串<br/>&quot;Function or Status Code&quot;：<br/>精確 → slash-token RegExp"]
+    MISC_FOUND{"找到？"}
+    MISC["取得 &quot;System&quot;、&quot;iBMS Parameters&quot;<br/>schema 設備層固定使用 &quot;MISC&quot;<br/>不修改 Appendix 原始 &quot;Equipment&quot;"]
+
+    MULTIPLE{"存在多筆不同的<br/>&quot;System&quot;／&quot;Equipment&quot;／<br/>&quot;iBMS Parameters&quot; 映射？"}
+    BLUE["設定藍色旗標<br/>保留所有候選及 review 原因<br/>不任取第一筆"]:::blue
+
+    TRUE(["Return True<br/>Excel：&quot;Appendix_b&quot; = T"])
+    FALSE(["Return False<br/>Excel：&quot;Appendix_b&quot; = F"])
+
+    START --> EXACT --> EXACT_FOUND
+    EXACT_FOUND -->|是| NAME
+    EXACT_FOUND -->|否| REGEX
+    NAME --> MULTIPLE
+
+    REGEX --> REGEX_FOUND
+    REGEX_FOUND -->|是| MULTIPLE
+    REGEX_FOUND -->|否| MISC_QUERY
+
+    MISC_QUERY --> MISC_FOUND
+    MISC_FOUND -->|是| MISC
+    MISC_FOUND -->|否| FALSE
+    MISC --> MULTIPLE
+
+    MULTIPLE -->|是| BLUE
+    MULTIPLE -->|否| TRUE
+    BLUE --> TRUE
+
+    classDef blue fill:#dae8fc,stroke:#6c8ebf,color:#000

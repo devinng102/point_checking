@@ -1,0 +1,73 @@
+flowchart TD
+    INPUT["讀取原始 Excel／CSV"]:::source
+    PARSE["以 &quot;Point Name&quot; 最後一個連字號拆分<br/>取得 derived Function Code<br/>及 derived point base name"]
+    FUNCTION{"derived Function Code<br/>在 &quot;appendix_b&quot; 匹配？<br/>精確 → slash-token RegExp"}
+
+    DEVICE[["執行 Device ID Checking<br/>保留候選拆分及黃色旗標"]]
+    DEVICE_RESULT{"Return True？"}
+
+    EQUIPMENT[["執行 Equipment Code Checking<br/>保留映射及藍色旗標"]]
+    APPENDIX_RESULT{"Return True？"}
+
+    APPENDIX_T["Excel：&quot;Appendix_b&quot; = T"]:::output
+    APPENDIX_F["Excel：&quot;Appendix_b&quot; = F"]:::output
+
+    MULTIPLE{"有藍色多映射旗標？"}
+    CANDIDATES["保留所有候選映射／查找結果<br/>不任取第一筆<br/>無法確定的 schema 結果留空"]
+
+    PATH["查目標大樓所有 schema documents<br/>&quot;System&quot; → &quot;Equipment&quot; 或 &quot;MISC&quot;<br/>→ derived point base name<br/>→ &quot;iBMS Parameters&quot;<br/>要求 &quot;point_name&quot; = 原始 &quot;Point Name&quot;"]
+    SCAN["掃描目標大樓所有 schema documents<br/>查 derived point base name 群組 key<br/>不依賴 Appendix 的映射"]
+    EXISTS{"Schema 子流程<br/>Return True？"}
+
+    SCHEMA_T["Excel：&quot;enm_semantic_schema&quot; = T"]:::output
+    SCHEMA_F["Excel：&quot;enm_semantic_schema&quot; = F"]:::output
+
+    COLLECT["保留原始欄位及所有原始值<br/>只新增結果／推導值／review 原因"]
+    BLUE_FLAG{"有藍色旗標？"}
+    YELLOW_FLAG{"有黃色 review／error 旗標？"}
+    EQUAL{"Appendix 與 schema 結果相同？<br/>T/T 或 F/F"}
+
+    BLUE(["Multiple mappings<br/>藍色：保留全部 review 原因"]):::blue
+    YELLOW(["Review<br/>黃色：等待人工確認"]):::yellow
+    GREEN(["Matched<br/>綠色"]):::green
+    RED(["Unmatched<br/>紅色"]):::red
+
+    INPUT --> PARSE --> FUNCTION
+    FUNCTION -->|是| EQUIPMENT
+    FUNCTION -->|否| DEVICE
+    DEVICE --> DEVICE_RESULT
+    DEVICE_RESULT -->|是| EQUIPMENT
+    DEVICE_RESULT -->|否| APPENDIX_F
+
+    EQUIPMENT --> APPENDIX_RESULT
+    APPENDIX_RESULT -->|是| APPENDIX_T
+    APPENDIX_RESULT -->|否| APPENDIX_F
+
+    APPENDIX_T --> MULTIPLE
+    MULTIPLE -->|是| CANDIDATES
+    MULTIPLE -->|否| PATH
+    APPENDIX_F --> SCAN
+
+    PATH --> EXISTS
+    SCAN --> EXISTS
+    EXISTS -->|是| SCHEMA_T
+    EXISTS -->|否| SCHEMA_F
+
+    CANDIDATES --> COLLECT
+    SCHEMA_T --> COLLECT
+    SCHEMA_F --> COLLECT
+    COLLECT --> BLUE_FLAG
+
+    BLUE_FLAG -->|是| BLUE
+    BLUE_FLAG -->|否| YELLOW_FLAG
+    YELLOW_FLAG -->|是| YELLOW
+    YELLOW_FLAG -->|否| EQUAL
+    EQUAL -->|是| GREEN
+    EQUAL -->|否| RED
+
+    classDef source fill:#ede7f6,stroke:#7e57c2,color:#311b92
+    classDef output fill:#e0f2f1,stroke:#26a69a,color:#004d40
+    classDef green fill:#d5e8d4,stroke:#82b366,color:#000
+    classDef red fill:#f8cecc,stroke:#b85450,color:#000
+    classDef yellow fill:#fff2cc,stroke:#d6b656,color:#000
+    classDef blue fill:#dae8fc,stroke:#6c8ebf,color:#000
