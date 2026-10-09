@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="RHhmauBtEugfXPCHtXjM">
-    <mxGraphModel dx="2486" dy="2041" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="4385" dy="3043" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -127,7 +127,7 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-39" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-37">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 3&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
           <mxGeometry height="80" width="190" x="15" y="400" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=top;container=1;" value="&lt;h2&gt;Equipment Code Checking Process&lt;/h2&gt;" vertex="1">
@@ -190,7 +190,7 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-22" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.003;entryY=0.456;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-2">
           <mxGeometry relative="1" x="0.0015" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-23" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.534;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.874;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-2">
+        <mxCell id="E50qB_bewiRri_-YFIzX-23" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.997;exitY=0.487;exitDx=0;exitDy=0;exitPerimeter=0;" target="Au464GKHaQkNzhSAhbhp-3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-29" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-1">
@@ -214,7 +214,7 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-47" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.213;exitY=0.95;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-44">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 3&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
           <mxGeometry height="80" width="190" x="235" y="400" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-41" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-31">
@@ -269,7 +269,7 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-94" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.838;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-91">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 3&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
           <mxGeometry height="80" width="180" x="960" y="400" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-61" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;container=1;" value="&lt;h2&gt;Exist in Target Building Checking Process&lt;/h2&gt;" vertex="1">
@@ -342,7 +342,7 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-63" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Au464GKHaQkNzhSAhbhp-3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-62" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4&lt;div&gt;Get the Device ID and the&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&quot;Function or Status Code&quot;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;without the Device ID&lt;/span&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-62" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 5&lt;div&gt;Get the Device ID and the&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&quot;Function or Status Code&quot;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;without the Device ID&lt;/span&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="75" width="190" x="747.5" y="400" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-66" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.487;entryY=0.015;entryDx=0;entryDy=0;" target="Au464GKHaQkNzhSAhbhp-1">
