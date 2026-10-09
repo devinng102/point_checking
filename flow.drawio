@@ -1,14 +1,14 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Page-1" id="RHhmauBtEugfXPCHtXjM">
-    <mxGraphModel dx="4385" dy="3043" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2486" dy="2041" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="Au464GKHaQkNzhSAhbhp-20" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;exitX=0.005;exitY=0.475;exitDx=0;exitDy=0;exitPerimeter=0;" target="Au464GKHaQkNzhSAhbhp-13">
           <mxGeometry relative="1" x="0.0318" as="geometry" />
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=top;container=1;" value="&lt;h2&gt;Device ID Checking Process&lt;/h2&gt;" vertex="1">
-          <mxGeometry height="590" width="640" x="1260" y="-20" as="geometry">
+        <mxCell id="Au464GKHaQkNzhSAhbhp-16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=top;container=1;" value="&lt;h2&gt;&lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; Checking Process&lt;/h2&gt;" vertex="1">
+          <mxGeometry height="650" width="640" x="1260" y="-20" as="geometry">
             <mxRectangle height="60" width="280" x="810" y="90" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -18,12 +18,12 @@
         <mxCell id="Au464GKHaQkNzhSAhbhp-22" edge="1" parent="Au464GKHaQkNzhSAhbhp-16" source="Au464GKHaQkNzhSAhbhp-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="Au464GKHaQkNzhSAhbhp-18">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-15" parent="Au464GKHaQkNzhSAhbhp-16" style="rounded=0;whiteSpace=wrap;html=1;container=0;" value="Remove the last character of &quot;Function or Status Code&quot; to see if it can be found in appendix b" vertex="1">
+        <mxCell id="Au464GKHaQkNzhSAhbhp-15" parent="Au464GKHaQkNzhSAhbhp-16" style="rounded=0;whiteSpace=wrap;html=1;container=0;" value="Remove one trailing character from the &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; from &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt;. Query &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; field &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt;: exact first, then any complete slash-separated token. Stop at the first match; strip at most two characters." vertex="1">
           <mxGeometry height="60" width="422.46" x="108.77" y="84.29" as="geometry">
             <mxRectangle height="30" width="540" x="60" y="60" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-24" edge="1" parent="Au464GKHaQkNzhSAhbhp-16" source="Au464GKHaQkNzhSAhbhp-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Au464GKHaQkNzhSAhbhp-23">
+        <mxCell id="Au464GKHaQkNzhSAhbhp-24" edge="1" parent="Au464GKHaQkNzhSAhbhp-16" source="Au464GKHaQkNzhSAhbhp-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="device-numeric">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="Au464GKHaQkNzhSAhbhp-17" parent="Au464GKHaQkNzhSAhbhp-16" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Yes&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
@@ -35,8 +35,8 @@
         <mxCell id="Au464GKHaQkNzhSAhbhp-18" parent="Au464GKHaQkNzhSAhbhp-16" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="No&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="37.21" x="417.79" y="160" as="geometry" />
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-23" parent="Au464GKHaQkNzhSAhbhp-16" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True" vertex="1">
-          <mxGeometry height="60" width="120" x="96.28" y="252.86" as="geometry" />
+        <mxCell id="Au464GKHaQkNzhSAhbhp-23" parent="Au464GKHaQkNzhSAhbhp-16" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True&lt;br&gt;Candidate base code found.&lt;br&gt;Keep review flags; continue &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; / &lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt; checking." vertex="1">
+          <mxGeometry height="80" width="240" x="40" y="530" as="geometry" />
         </mxCell>
         <mxCell id="Au464GKHaQkNzhSAhbhp-32" edge="1" parent="Au464GKHaQkNzhSAhbhp-16" source="Au464GKHaQkNzhSAhbhp-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.34;exitY=1.019;exitDx=0;exitDy=0;exitPerimeter=0;" target="Au464GKHaQkNzhSAhbhp-28">
           <mxGeometry relative="1" as="geometry" />
@@ -64,8 +64,8 @@
         <mxCell id="Au464GKHaQkNzhSAhbhp-29" parent="Au464GKHaQkNzhSAhbhp-16" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="No&lt;div&gt;&lt;br/&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="40" width="37.21" x="494.02" y="340" as="geometry" />
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-30" parent="Au464GKHaQkNzhSAhbhp-16" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False" vertex="1">
-          <mxGeometry height="60" width="120" x="338.61" y="410" as="geometry" />
+        <mxCell id="Au464GKHaQkNzhSAhbhp-30" parent="Au464GKHaQkNzhSAhbhp-16" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt;: False (F)&amp;gt;&lt;br&gt;Scan schema for the &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt;.&lt;br&gt;Not an automatic red/yellow result." vertex="1">
+          <mxGeometry height="110" width="240" x="320" y="430" as="geometry" />
         </mxCell>
         <mxCell id="Au464GKHaQkNzhSAhbhp-7" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.075;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Au464GKHaQkNzhSAhbhp-6">
           <mxGeometry relative="1" x="-0.1063" as="geometry">
@@ -77,21 +77,21 @@
             <mxPoint x="640" y="150" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 1&lt;br&gt;Check if the &quot;Function or Status Code&quot; can be found in appendix b." vertex="1">
+        <mxCell id="Au464GKHaQkNzhSAhbhp-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 1: Query &lt;font color=&quot;#ab47bc&quot;&gt;&quot;MASTER&quot;&lt;/font&gt;.&lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; field &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt; using the &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; from &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt;.&lt;br&gt;Exact first; then RegExp matching ANY complete slash-separated token.&lt;br&gt;Examples only: FALM matches FALM/TFALM; S does not match SWT or SS." vertex="1">
           <mxGeometry height="60" width="760" x="190" y="-60" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-27" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-24">
+        <mxCell id="E50qB_bewiRri_-YFIzX-27" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.15;exitY=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-24">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="125" y="280" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-28" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-25">
+        <mxCell id="E50qB_bewiRri_-YFIzX-28" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.85;exitY=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-25">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="315" y="280" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 2:&lt;div&gt;Check if the Equipment Code can be found in appendix b to get the Equipment.&lt;/div&gt;" vertex="1">
-          <mxGeometry height="75" width="270" x="95" y="200" as="geometry" />
+        <mxCell id="Au464GKHaQkNzhSAhbhp-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 2: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; + &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; checking&lt;br&gt;Exact &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt;, then RegExp(&lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt;), then missing/empty &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; (&lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt;).&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt;: exact, then slash-token RegExp.&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; is the mapped name, NOT &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt;.&lt;br&gt;Different mappings: set BLUE review flag." vertex="1">
+          <mxGeometry height="135" width="270" x="95" y="175" as="geometry" />
         </mxCell>
         <mxCell id="Au464GKHaQkNzhSAhbhp-8" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="Au464GKHaQkNzhSAhbhp-3">
           <mxGeometry relative="1" as="geometry" />
@@ -99,7 +99,7 @@
         <mxCell id="Au464GKHaQkNzhSAhbhp-6" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Yes" vertex="1">
           <mxGeometry height="25" width="50" x="205" y="64.29" as="geometry" />
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-12" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
+        <mxCell id="Au464GKHaQkNzhSAhbhp-12" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-11" target="Au464GKHaQkNzhSAhbhp-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="897.5" y="240" as="targetPoint" />
           </mxGeometry>
@@ -118,7 +118,7 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-55" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-53">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="Au464GKHaQkNzhSAhbhp-13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 3:&lt;div&gt;Check if the&amp;nbsp; &quot;Function or Status Code&quot; contain Device ID&lt;/div&gt;" vertex="1">
+        <mxCell id="Au464GKHaQkNzhSAhbhp-13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 3: &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; Checking&lt;br&gt;Try stripping 1, then 2 characters.&lt;br&gt;Non-numeric candidate: YELLOW review flag; continue checking." vertex="1">
           <mxGeometry height="80" width="190" x="802.5" y="200" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-38" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.2;exitY=0.983;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-36">
@@ -127,11 +127,11 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-39" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-37">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
-          <mxGeometry height="80" width="190" x="15" y="400" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 5: Check target building&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt;: True (T)&amp;gt;&lt;br&gt;Path: &lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt; &amp;rarr; (&lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; or &lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt;) &amp;rarr; &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt; &amp;rarr; &lt;font color=&quot;#26a69a&quot;&gt;&quot;iBMS Parameters&quot;&lt;/font&gt;.&lt;br&gt;Require &lt;font color=&quot;#26a69a&quot;&gt;&quot;point_name&quot;&lt;/font&gt; = original &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt;.&lt;br&gt;Do not append Device ID to the parameter key.&lt;br&gt;Keep BLUE / YELLOW flags." vertex="1">
+          <mxGeometry height="160" width="210" x="5" y="365" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=top;container=1;" value="&lt;h2&gt;Equipment Code Checking Process&lt;/h2&gt;" vertex="1">
-          <mxGeometry height="850" width="700" x="-800" y="-60" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=top;container=1;" value="&lt;h2&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; Checking Process&lt;/h2&gt;" vertex="1">
+          <mxGeometry height="1200" width="700" x="-800" y="-60" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-13" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.179;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" target="E50qB_bewiRri_-YFIzX-7">
           <mxGeometry relative="1" as="geometry" />
@@ -139,13 +139,13 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-14" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.876;exitY=1.04;exitDx=0;exitDy=0;exitPerimeter=0;" target="E50qB_bewiRri_-YFIzX-8">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-3" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Query the exactly Equipment Code and the&amp;nbsp;&amp;nbsp;&quot;Function or Status Code&quot;&amp;nbsp;" vertex="1">
-          <mxGeometry height="25" width="493.44262295081967" x="91.80327868852459" y="65" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-3" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Query &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; using exact CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code / System / Room Code&quot;&lt;/font&gt;.&lt;br&gt;Match &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt; against &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; (without &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; if extracted): exact first, then slash-token RegExp." vertex="1">
+          <mxGeometry height="60" width="493.44262295081967" x="91.80327868852459" y="65" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-19" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-11">
+        <mxCell id="E50qB_bewiRri_-YFIzX-19" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="mapping-multiple">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-4" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Get the Equipment and use the Equipment and&amp;nbsp;&amp;nbsp;&quot;Function or Status Code&quot; to query" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-4" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Get the mapped &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; NAME and query &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; + &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt; (exact, then slash-token RegExp).&lt;br&gt;Retain &lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt; / &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; / &lt;font color=&quot;#26a69a&quot;&gt;&quot;iBMS Parameters&quot;&lt;/font&gt; mappings." vertex="1">
           <mxGeometry height="80" width="206.55737704918033" x="77.58327868852459" y="230" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-17" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.135;exitY=1.025;exitDx=0;exitDy=0;exitPerimeter=0;" target="E50qB_bewiRri_-YFIzX-9">
@@ -154,8 +154,8 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-18" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.8;exitY=0.975;exitDx=0;exitDy=0;exitPerimeter=0;" target="E50qB_bewiRri_-YFIzX-10">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-6" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Query the RegExp(Equipment Code)&amp;nbsp; and&amp;nbsp;&amp;nbsp;&quot;Function or Status Code&quot;&amp;nbsp;" vertex="1">
-          <mxGeometry height="40" width="230" x="409" y="250" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-6" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Query &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; using RegExp(CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code / System / Room Code&quot;&lt;/font&gt;).&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt;: exact &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; first, then slash-token RegExp." vertex="1">
+          <mxGeometry height="100" width="230" x="409" y="225" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-15" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-4">
           <mxGeometry relative="1" as="geometry" />
@@ -169,8 +169,10 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-8" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Not Found" vertex="1">
           <mxGeometry height="40" width="92" x="478" y="135" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-20" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-11">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-20" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="E50qB_bewiRri_-YFIzX-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="mapping-multiple">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="300" y="390" /><mxPoint x="300" y="730" /><mxPoint x="360" y="730" /><mxPoint x="360" y="830" /></Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-9" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Found" vertex="1">
           <mxGeometry height="40" width="61.72" x="409" y="330" as="geometry" />
@@ -181,13 +183,13 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-10" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Not Found" vertex="1">
           <mxGeometry height="40" width="92" x="547" y="330" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-11" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True" vertex="1">
-          <mxGeometry height="60" width="120" x="120" y="730" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-11" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt;: True (T)&amp;gt;&lt;br&gt;Keep candidate mappings and review flags." vertex="1">
+          <mxGeometry height="90" width="260" x="80" y="1050" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-12" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False" vertex="1">
-          <mxGeometry height="60" width="120" x="533" y="730" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-12" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt;: False (F)&amp;gt;&lt;br&gt;Scan target building for the &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt;." vertex="1">
+          <mxGeometry height="90" width="260" x="410" y="1050" as="geometry" />
         </mxCell>
-        <mxCell id="misc-query" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Query Appendix B using the same &quot;Function or Status Code&quot; (without Device ID if extracted), where &quot;Equipment Code&quot; is missing, null or an empty string." vertex="1">
+        <mxCell id="misc-query" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Query &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt;: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; is missing, null or empty.&lt;br&gt;Match &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt; against the same &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; (without &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; if extracted): exact, then slash-token RegExp." vertex="1">
           <mxGeometry height="80" width="300" x="385" y="425" as="geometry" />
         </mxCell>
         <mxCell id="misc-query-found" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-query" target="misc-found" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.2;exitY=1;entryX=0.5;entryY=0;">
@@ -205,19 +207,21 @@
         <mxCell id="misc-found-mapping" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-found" target="misc-mapping" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.5;entryY=0;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="misc-mapping" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Get &quot;System&quot; and &quot;iBMS Parameters&quot; from the matched Appendix B record. Set the schema Equipment key to &quot;MISC&quot; (not the record's Equipment name)." vertex="1">
+        <mxCell id="misc-mapping" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;" value="Get &lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt; and &lt;font color=&quot;#26a69a&quot;&gt;&quot;iBMS Parameters&quot;&lt;/font&gt; from the &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; mapping.&lt;br&gt;Set the schema &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt;-level key to literal &lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt;, NOT the &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; name.&lt;br&gt;Do not modify the source record." vertex="1">
           <mxGeometry height="80" width="240" x="325" y="620" as="geometry" />
         </mxCell>
-        <mxCell id="misc-mapping-true" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-mapping" target="E50qB_bewiRri_-YFIzX-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=1;entryY=0.5;">
+        <mxCell id="misc-mapping-true" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-mapping" target="mapping-multiple" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=1;entryY=0.5;">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="misc-not-found-false" edge="1" parent="E50qB_bewiRri_-YFIzX-2" source="misc-not-found" target="E50qB_bewiRri_-YFIzX-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=0.75;entryY=0;">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="680" y="605" /><mxPoint x="680" y="1030" /><mxPoint x="605" y="1030" /></Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-22" edge="1" parent="1" source="Au464GKHaQkNzhSAhbhp-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1.003;entryY=0.456;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-2">
           <mxGeometry relative="1" x="0.0015" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-23" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.997;exitY=0.487;exitDx=0;exitDy=0;exitPerimeter=0;" target="Au464GKHaQkNzhSAhbhp-3">
+        <mxCell id="E50qB_bewiRri_-YFIzX-23" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;exitX=1;exitY=0.3;" target="Au464GKHaQkNzhSAhbhp-3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-29" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-1">
@@ -232,8 +236,8 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-25" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="No" vertex="1">
           <mxGeometry height="25" width="50" x="290" y="335" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;" value="Correct" vertex="1">
-          <mxGeometry height="140" width="325" x="-87.5" y="710" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-31" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;" value="Correct&lt;br&gt;&amp;lt;mark the final result: matched (green)&amp;gt;" vertex="1">
+          <mxGeometry height="110" width="280" x="160" y="1680" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-46" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-43">
           <mxGeometry relative="1" as="geometry" />
@@ -241,31 +245,31 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-47" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.213;exitY=0.95;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-44">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
-          <mxGeometry height="80" width="190" x="235" y="400" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 5: Scan target building&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt;: False (F)&amp;gt;&lt;br&gt;Scan all schema documents for the &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt; group key, regardless of &lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt; / &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt;." vertex="1">
+          <mxGeometry height="130" width="210" x="235" y="390" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-41" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-31">
+        <mxCell id="E50qB_bewiRri_-YFIzX-41" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="final-resolution">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-36" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Yes" vertex="1">
-          <mxGeometry height="25" width="50" x="50" y="510" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-36" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Yes&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: True (T)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="100" x="5" y="550" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-42" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-40">
+        <mxCell id="E50qB_bewiRri_-YFIzX-42" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="final-resolution">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-37" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="No" vertex="1">
-          <mxGeometry height="25" width="50" x="140" y="510" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="No&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: False (F)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="100" x="115" y="550" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-40" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;" value="Wrong" vertex="1">
-          <mxGeometry height="140" width="325" x="440" y="710" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-40" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#000000;" value="Wrong&lt;br&gt;&amp;lt;mark the final result: unmatched (red)&amp;gt;" vertex="1">
+          <mxGeometry height="110" width="280" x="510" y="1680" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-51" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-40">
+        <mxCell id="E50qB_bewiRri_-YFIzX-51" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="final-resolution">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-43" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Yes" vertex="1">
-          <mxGeometry height="25" width="50" x="330" y="510" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-43" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Yes&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: True (T)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="100" x="345" y="550" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-50" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-31">
+        <mxCell id="E50qB_bewiRri_-YFIzX-50" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-44" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="final-resolution">
           <mxGeometry relative="1" x="-0.0182" as="geometry">
             <Array as="points">
               <mxPoint x="265" y="780" />
@@ -273,8 +277,8 @@
             <mxPoint x="240" y="780" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-44" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="No" vertex="1">
-          <mxGeometry height="25" width="50" x="240" y="510" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-44" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="No&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: False (F)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="100" x="235" y="550" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-58" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-62">
           <mxGeometry relative="1" as="geometry">
@@ -296,11 +300,11 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-94" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.838;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-91">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4&lt;div&gt;Check if the point can be found in the target building.&lt;/div&gt;&lt;div&gt;(Run Exist in Target Building Checking Process)&lt;/div&gt;" vertex="1">
-          <mxGeometry height="80" width="180" x="960" y="400" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-59" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 5: Scan target building&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt;: False (F)&amp;gt;&lt;br&gt;No &lt;font color=&quot;#fb8c00&quot;&gt;&quot;base Function Code&quot;&lt;/font&gt; after two trims.&lt;br&gt;Scan all schema documents for the &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt; group key.&lt;br&gt;Use normal T/F color rules." vertex="1">
+          <mxGeometry height="140" width="210" x="955" y="390" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-61" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;container=1;" value="&lt;h2&gt;Exist in Target Building Checking Process&lt;/h2&gt;" vertex="1">
-          <mxGeometry height="730" width="610" x="1260" y="600" as="geometry">
+          <mxGeometry height="730" width="610" x="1260" y="680" as="geometry">
             <mxRectangle height="60" width="400" x="1260" y="600" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -312,30 +316,30 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-64" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Get &quot;System&quot; and &quot;iBMS Parameters&quot; from Appendix B. Use its &quot;Equipment&quot;, or &quot;MISC&quot; for the missing/empty Equipment Code fallback. Keep the extracted Device ID (if any). Get &quot;point name (without function code)&quot;, &quot;Building &amp;amp; Block Code&quot; and &quot;Point Name&quot; from CSV." vertex="1">
-          <mxGeometry height="69.8" width="590" x="10" y="105.84" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-64" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Appendix=True: get &lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt;, &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; (mapped NAME) and &lt;font color=&quot;#26a69a&quot;&gt;&quot;iBMS Parameters&quot;&lt;/font&gt; from &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt;. Use &lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt; for the missing/empty &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; fallback. Use &lt;font color=&quot;#26a69a&quot;&gt;&quot;iBMS Parameters&quot;&lt;/font&gt; unchanged as the parameter key: never append &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt;. Keep review flags. Derive &lt;font color=&quot;#fb8c00&quot;&gt;&quot;point base name&quot;&lt;/font&gt; from &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt;. CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Building &amp; Block Code&quot;&lt;/font&gt; selects the database. Source values remain unchanged." vertex="1">
+          <mxGeometry height="90" width="590" x="10" y="95" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-77" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-70">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-68" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Step 1:&lt;br&gt;Find the target building according to the &quot;Building &amp;amp; Block Code&quot;." vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-68" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Step 1:&lt;br&gt;Find the target building according to the &lt;font color=&quot;#26a69a&quot;&gt;&quot;Building &amp; Block Code&quot;&lt;/font&gt;." vertex="1">
           <mxGeometry height="64.41176470588235" width="206.56" x="204.92" y="204.91529411764705" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-78" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="E50qB_bewiRri_-YFIzX-73">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-70" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Step 2:&lt;div&gt;Find the point according to the below format&lt;/div&gt;" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-70" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Step 2: Check all schema documents at the mapped path below AND require &lt;font color=&quot;#26a69a&quot;&gt;&quot;point_name&quot;&lt;/font&gt; = the original full CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt;." vertex="1">
           <mxGeometry height="51.30397058823529" width="206.56" x="207.35999999999999" y="300.5882352941176" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-89" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-74" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.106;exitY=1.019;exitDx=0;exitDy=0;exitPerimeter=0;" target="E50qB_bewiRri_-YFIzX-79">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-73" parent="E50qB_bewiRri_-YFIzX-61" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" value="enm_semantic_schema" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-73" parent="E50qB_bewiRri_-YFIzX-61" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" value="&lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;" vertex="1">
           <mxGeometry height="150.4" width="275.08" x="204.92" y="379.6" as="geometry">
             <mxRectangle height="30" width="170" x="216.56" y="421.93" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-74" parent="E50qB_bewiRri_-YFIzX-73" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="System&lt;div&gt;&amp;nbsp; -&amp;nbsp; Equipment&lt;/div&gt;&lt;div&gt;&amp;nbsp; &amp;nbsp; -&amp;nbsp;&amp;nbsp;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;point name (without function code)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp;-&amp;nbsp; iBMS Parameters + Device ID (if have)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&amp;nbsp; - point object : {&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&amp;nbsp; point_name: &quot;Point Name&quot;,&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&amp;nbsp; ...&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;text-align: center; background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;}&lt;br&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-74" parent="E50qB_bewiRri_-YFIzX-73" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;" value="&lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt;&lt;br&gt;&amp;nbsp; - &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; (mapped NAME), or &lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp; - &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; - &lt;font color=&quot;#26a69a&quot;&gt;&quot;iBMS Parameters&quot;&lt;/font&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; - point object: {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &lt;font color=&quot;#26a69a&quot;&gt;&quot;point_name&quot;&lt;/font&gt;: original CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; }" vertex="1">
           <mxGeometry height="125.21" width="275.08" y="24.79" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-87" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-83">
@@ -347,11 +351,11 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-80" parent="E50qB_bewiRri_-YFIzX-61" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Not Found" vertex="1">
           <mxGeometry height="51.30857142857143" width="61.48" x="350" y="559.9985714285715" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-83" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True" vertex="1">
-          <mxGeometry height="60" width="120" x="178" y="630" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-83" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: True (T)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="170" x="145" y="630" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-84" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False" vertex="1">
-          <mxGeometry height="60" width="120" x="340" y="630" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-84" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: False (F)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="170" x="330" y="630" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-85" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.354;entryY=0.018;entryDx=0;entryDy=0;entryPerimeter=0;" target="E50qB_bewiRri_-YFIzX-84">
           <mxGeometry relative="1" x="0.0222" as="geometry">
@@ -361,7 +365,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-88" edge="1" parent="E50qB_bewiRri_-YFIzX-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-80">
+        <mxCell id="E50qB_bewiRri_-YFIzX-88" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-74" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-80">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="380.74" y="530" as="sourcePoint" />
           </mxGeometry>
@@ -369,22 +373,22 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-63" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="Au464GKHaQkNzhSAhbhp-3">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-62" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 5&lt;div&gt;Get the Device ID and the&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&quot;Function or Status Code&quot;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;without the Device ID&lt;/span&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="75" width="190" x="747.5" y="400" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-62" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;" value="Flow 4: Keep the candidate &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; and &lt;font color=&quot;#fb8c00&quot;&gt;&quot;base Function Code&quot;&lt;/font&gt;.&lt;br&gt;1-2 digits: accept.&lt;br&gt;Other suffix: preserve YELLOW flag, but continue candidate Appendix / schema checks." vertex="1">
+          <mxGeometry height="110" width="200" x="747.5" y="400" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-66" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.487;entryY=0.015;entryDx=0;entryDy=0;" target="Au464GKHaQkNzhSAhbhp-1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-66" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-65" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;" target="parse-point-name">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-65" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;" value="CSV point list" vertex="1">
           <mxGeometry height="100" width="100" x="510" y="-270" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-95" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-90" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="E50qB_bewiRri_-YFIzX-40">
+        <mxCell id="E50qB_bewiRri_-YFIzX-95" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-90" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="final-resolution">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-90" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Yes" vertex="1">
-          <mxGeometry height="25" width="50" x="972.5" y="525" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-90" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Yes&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: True (T)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="100" x="955" y="550" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-96" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-31">
+        <mxCell id="E50qB_bewiRri_-YFIzX-96" edge="1" parent="1" source="E50qB_bewiRri_-YFIzX-91" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="final-resolution">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1095" y="960" />
@@ -392,8 +396,136 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-91" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="No" vertex="1">
-          <mxGeometry height="25" width="50" x="1070" y="525" as="geometry" />
+        <mxCell id="E50qB_bewiRri_-YFIzX-91" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="No&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: False (F)&amp;gt;" vertex="1">
+          <mxGeometry height="70" width="100" x="1065" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="parse-point-name" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="CHECKING ONLY: split &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt; at its LAST hyphen.&lt;br&gt;&lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; = last complete segment; &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt; = everything before it.&lt;br&gt;Do not use CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt; or &lt;font color=&quot;#26a69a&quot;&gt;&quot;point name (without function code)&quot;&lt;/font&gt; as checking inputs; KEEP both columns and original values in Excel export.&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Floor Code&quot;&lt;/font&gt; / &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment ID / System ID / Room ID&quot;&lt;/font&gt; may be blank." vertex="1">
+          <mxGeometry height="100" width="760" x="190" y="-165" as="geometry" />
+        </mxCell>
+        <mxCell id="parse-to-function" parent="1" source="parse-point-name" target="Au464GKHaQkNzhSAhbhp-1" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="matching-rules" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=12;" value="&lt;b&gt;Data sources and GENERAL matching rules&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#ab47bc&quot;&gt;&quot;UAT ASL&quot;&lt;/font&gt; connection: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;MASTER&quot;&lt;/font&gt; database, &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; collection.&lt;br&gt;Target database = CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Building &amp; Block Code&quot;&lt;/font&gt;; collection = &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;.&lt;br&gt;CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code / System / Room Code&quot;&lt;/font&gt; matches &lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; (a code, e.g. ACC / CHR/ACC/WCC).&lt;br&gt;&lt;font color=&quot;#ab47bc&quot;&gt;&quot;appendix_b&quot;&lt;/font&gt; &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; is a mapped NAME (e.g. Chiller), used as the schema hierarchy key; NOT an &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt;.&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt; supplies &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;&lt;/font&gt; and &lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived point base name&quot;&lt;/font&gt; for checking only.&lt;br&gt;GENERAL &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt; rule: exact first; if no match, RegExp for the escaped complete token bounded by start/end or '/'. Applies to ALL codes and all Function lookup stages; never an arbitrary substring or a hard-coded example list.&lt;br&gt;Examples only: FALM / TFALM match FALM/TFALM; S does not match SWT / SS.&lt;br&gt;Function-only multiple records do not trigger BLUE. Different mappings after &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;&lt;/font&gt; / &lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt; checking do." vertex="1">
+          <mxGeometry height="360" width="700" x="-800" y="-450" as="geometry" />
+        </mxCell>
+        <mxCell id="device-numeric" parent="Au464GKHaQkNzhSAhbhp-16" style="rhombus;whiteSpace=wrap;html=1;" value="Removed suffix is&lt;br&gt;1-2 digits only?" vertex="1">
+          <mxGeometry height="100" width="220" x="40" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="device-accepted" parent="Au464GKHaQkNzhSAhbhp-16" source="device-numeric" target="Au464GKHaQkNzhSAhbhp-23" edge="1" value="Yes: accept &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="20" y="290" /><mxPoint x="20" y="570" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="device-suspicious" parent="Au464GKHaQkNzhSAhbhp-16" source="device-numeric" target="device-review-flag" edge="1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="device-review-flag" parent="Au464GKHaQkNzhSAhbhp-16" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" value="Set YELLOW review flag and record the candidate split.&lt;br&gt;Example: SWT -&amp;gt; S + WT.&lt;br&gt;Continue candidate Appendix / schema checks and output T/F; do not silently accept this &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt;." vertex="1">
+          <mxGeometry height="130" width="250" x="30" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="device-review-return" parent="Au464GKHaQkNzhSAhbhp-16" source="device-review-flag" target="Au464GKHaQkNzhSAhbhp-23" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mapping-multiple" parent="E50qB_bewiRri_-YFIzX-2" style="rhombus;whiteSpace=wrap;html=1;" value="Multiple different&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt; / &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; /&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;iBMS Parameters&quot;&lt;/font&gt; mappings?" vertex="1">
+          <mxGeometry height="120" width="270" x="75" y="770" as="geometry" />
+        </mxCell>
+        <mxCell id="mapping-single-return" parent="E50qB_bewiRri_-YFIzX-2" source="mapping-multiple" target="E50qB_bewiRri_-YFIzX-11" edge="1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mapping-multiple-review" parent="E50qB_bewiRri_-YFIzX-2" source="mapping-multiple" target="mapping-blue-flag" edge="1" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mapping-blue-flag" parent="E50qB_bewiRri_-YFIzX-2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" value="Set BLUE multiple-mapping flag.&lt;br&gt;Retain all candidates; do not choose the first record.&lt;br&gt;BLUE takes priority over YELLOW; keep every review reason." vertex="1">
+          <mxGeometry height="110" width="270" x="370" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="mapping-blue-return" parent="E50qB_bewiRri_-YFIzX-2" source="mapping-blue-flag" target="E50qB_bewiRri_-YFIzX-11" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;entryX=1;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-process" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;container=1;" value="&lt;h2&gt;Appendix=False: Point Base Name Scan Process&lt;/h2&gt;" vertex="1">
+          <mxGeometry height="580" width="700" x="-800" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-read" parent="scan-process" style="rounded=0;whiteSpace=wrap;html=1;" value="Read ALL documents from DB[CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Building &amp; Block Code&quot;&lt;/font&gt;][&lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;].&lt;br&gt;Use &lt;font color=&quot;#fb8c00&quot;&gt;&quot;point base name&quot;&lt;/font&gt; derived from &lt;font color=&quot;#26a69a&quot;&gt;&quot;Point Name&quot;&lt;/font&gt;, not the CSV base-name column." vertex="1">
+          <mxGeometry height="90" width="600" x="50" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-read-check" parent="scan-process" source="scan-read" target="scan-found" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-found" parent="scan-process" style="rhombus;whiteSpace=wrap;html=1;" value="Derived &lt;font color=&quot;#fb8c00&quot;&gt;&quot;point base name&quot;&lt;/font&gt; exists&lt;br&gt;as a &lt;font color=&quot;#26a69a&quot;&gt;&quot;System&quot;&lt;/font&gt; -&amp;gt; &lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment&quot;&lt;/font&gt; / &lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt;&lt;br&gt;-&amp;gt; group key in any document?" vertex="1">
+          <mxGeometry height="150" width="340" x="180" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-found-true" parent="scan-process" source="scan-found" target="scan-return-true" edge="1" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.2;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-found-false" parent="scan-process" source="scan-found" target="scan-return-false" edge="1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.8;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-return-true" parent="scan-process" style="rounded=0;whiteSpace=wrap;html=1;" value="Return True&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: True (T)&amp;gt;&lt;br&gt;Appendix=F, Schema=T: unmatched (red), unless a review flag overrides." vertex="1">
+          <mxGeometry height="110" width="280" x="40" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-return-false" parent="scan-process" style="rounded=0;whiteSpace=wrap;html=1;" value="Return False&lt;br&gt;&amp;lt;mark excel: &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt;: False (F)&amp;gt;&lt;br&gt;Appendix=F, Schema=F: matched (green), unless a review flag overrides." vertex="1">
+          <mxGeometry height="110" width="280" x="380" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-callout" parent="1" source="E50qB_bewiRri_-YFIzX-34" target="scan-process" edge="1" value="Run base-name scan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0;exitY=0.7;entryX=1;entryY=0.15;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="scan-no-code-callout" parent="1" source="E50qB_bewiRri_-YFIzX-59" target="scan-process" edge="1" value="Same scan process" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1190" y="700" /><mxPoint x="-450" y="1180" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="schema-callout" parent="1" source="E50qB_bewiRri_-YFIzX-1" target="E50qB_bewiRri_-YFIzX-61" edge="1" value="Run mapped-path check" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=0.5;exitY=1;entryX=0;entryY=0.1;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="110" y="660" /><mxPoint x="1200" y="660" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="final-resolution" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Export Excel: preserve EVERY original column and cell value, including CSV &lt;font color=&quot;#26a69a&quot;&gt;&quot;Function or Status Code&quot;&lt;/font&gt; and &lt;font color=&quot;#26a69a&quot;&gt;&quot;point name (without function code)&quot;&lt;/font&gt;. ADD result columns only.&lt;br&gt;Add &lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt; T/F, &lt;font color=&quot;#ab47bc&quot;&gt;&quot;enm_semantic_schema&quot;&lt;/font&gt; T/F, final result, derived codes, candidate mappings and review reasons.&lt;br&gt;BLUE &amp;gt; YELLOW &amp;gt; normal GREEN / RED.&lt;br&gt;Do not overwrite source data with derived or corrected values; leave unresolved NEW result values blank." vertex="1">
+          <mxGeometry height="170" width="430" x="350" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="resolution-blue" parent="1" source="final-resolution" target="final-blue-check" edge="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="final-blue-check" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="BLUE multiple-mapping flag?" vertex="1">
+          <mxGeometry height="100" width="280" x="420" y="1050" as="geometry" />
+        </mxCell>
+        <mxCell id="blue-yes" parent="1" source="final-blue-check" target="final-blue" edge="1" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="final-blue" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;" value="&amp;lt;mark the final result: multiple mappings (blue)&amp;gt;&lt;br&gt;Keep ALL reasons, including &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; review." vertex="1">
+          <mxGeometry height="120" width="280" x="850" y="1040" as="geometry" />
+        </mxCell>
+        <mxCell id="blue-no" parent="1" source="final-blue-check" target="final-yellow-check" edge="1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="final-yellow-check" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="YELLOW &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; review&lt;br&gt;or checking-error flag?" vertex="1">
+          <mxGeometry height="100" width="280" x="420" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="yellow-yes" parent="1" source="final-yellow-check" target="final-yellow" edge="1" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="final-yellow" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" value="&amp;lt;mark the final result: review (yellow)&amp;gt;&lt;br&gt;Keep candidate T/F results; wait for manual review.&lt;br&gt;Not matched / unmatched." vertex="1">
+          <mxGeometry height="120" width="280" x="850" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="yellow-no" parent="1" source="final-yellow-check" target="final-equal" edge="1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="final-equal" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="&lt;font color=&quot;#26a69a&quot;&gt;&quot;Appendix_b&quot;&lt;/font&gt; = schema?&lt;br&gt;T/T or F/F: matched&lt;br&gt;T/F or F/T: unmatched" vertex="1">
+          <mxGeometry height="120" width="300" x="410" y="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="equal-yes" parent="1" source="final-equal" target="E50qB_bewiRri_-YFIzX-31" edge="1" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.2;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="equal-no" parent="1" source="final-equal" target="E50qB_bewiRri_-YFIzX-40" edge="1" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.8;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="checking-error-note" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;" value="Checking / parsing errors: record the reason and set a YELLOW flag.&lt;br&gt;Do not convert failed execution into False; leave unknown values blank.&lt;br&gt;Continue candidate checks only where possible.&lt;br&gt;Two unsuccessful &lt;font color=&quot;#fb8c00&quot;&gt;&quot;Device ID&quot;&lt;/font&gt; trims are normal Appendix=False, NOT a checking error.&lt;br&gt;BLUE still overrides YELLOW." vertex="1">
+          <mxGeometry height="160" width="280" x="850" y="1450" as="geometry" />
+        </mxCell>
+        <mxCell id="error-note-resolution" parent="1" source="checking-error-note" target="final-resolution" edge="1" value="Any checking error" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;exitX=1;exitY=0.5;entryX=1;entryY=0.7;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1190" y="1530" /><mxPoint x="1190" y="941" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="terminology-legend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=12;" value="&lt;b&gt;Quoted names and text-color legend&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#ab47bc&quot;&gt;&quot;MASTER&quot;, &quot;appendix_b&quot;, &quot;enm_semantic_schema&quot;&lt;/font&gt;: database / collection names.&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;, &quot;Equipment&quot;, &quot;Point Name&quot;&lt;/font&gt;: exact source-field names; Code and mapped name are DIFFERENT fields.&lt;br&gt;&lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;, &quot;derived point base name&quot;, &quot;Device ID&quot;&lt;/font&gt;: checking-only derived values; never overwrite original Excel cells.&lt;br&gt;&lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt;: literal schema hierarchy key.&lt;br&gt;TEXT colors identify names; result BACKGROUND colors indicate green / red / yellow / blue status." vertex="1">
+          <mxGeometry height="200" width="700" x="-800" y="-700" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
