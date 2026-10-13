@@ -122,9 +122,31 @@ def point_at_path(
     return False
 
 
-def contains_point_base(
-    documents: Sequence[Document], point_base_name: str
+def misc_relevance_reason(
+    documents: Sequence[Document], candidate: Candidate, point_base_name: str
+) -> str | None:
+    keys = (candidate.system, "MISC", point_base_name)
+    deepest = 0
+    for document in documents:
+        current = document
+        depth = 0
+        for key in keys:
+            child = object_at(current, key)
+            if child is None:
+                break
+            current = child
+            depth += 1
+        deepest = max(deepest, depth)
+    if deepest == len(keys):
+        return None
+    path = " -> ".join(repr(key) for key in keys[:deepest + 1])
+    return f"MISC relevance unknown: missing schema path {path}."
+
+
+def contains_point(
+    documents: Sequence[Document], point_base_name: str, point_name: str
 ) -> bool:
+    found = False
     for document in documents:
         for system in document.values():
             if not isinstance(system, Mapping):
@@ -132,10 +154,16 @@ def contains_point_base(
             for equipment in system.values():
                 if not isinstance(equipment, Mapping):
                     continue
-                if point_base_name in equipment:
-                    object_at(equipment, point_base_name)
-                    return True
-    return False
+                group = object_at(equipment, point_base_name)
+                if group is not None:
+                    for parameter in group:
+                        point = object_at(group, parameter)
+                        if (
+                            point is not None
+                            and point.get("point_name") == point_name
+                        ):
+                            found = True
+    return found
 
 
 class PointChecker:
@@ -282,38 +310,93 @@ class PointChecker:
                 records, method = self._match_equipment(
                     code, result.base_function_code
                 )
-                result.appendix = bool(records)
+                result.appendix = (
+                    None if records and method == "MISC" else bool(records)
+                )
                 result.match_method = method
                 result.reasons.append(f"Appendix B matching: {method}.")
                 if records:
                     candidates = self._candidates(
                         records, method, result.base_function_code
                     )
-                    result.multiple_mappings = len(candidates) > 1
-                    if result.multiple_mappings:
-                        result.reasons.append(
-                            "Multiple different System / Equipment / "
-                            "iBMS Parameters mappings; blue review takes priority."
-                        )
+                    result.multiple_mappings = (
+                        method != "MISC" and len(candidates) > 1
+                    )
                     result.candidate_results = [
                         {**c.as_dict(), "Schema Match": None}
                         for c in candidates
                     ]
-                    documents = self.schema_source.get_schema(building)
+                    if method == "MISC":
+                        for diagnostic in result.candidate_results:
+                            diagnostic["MISC Relevance"] = None
+                            diagnostic["Relevance Reason"] = (
+                                "Schema relevance not checked."
+                            )
+                    try:
+                        documents = self.schema_source.get_schema(building)
+                    except CheckingError as exc:
+                        if method == "MISC":
+                            for diagnostic in result.candidate_results:
+                                diagnostic["Relevance Reason"] = str(exc)
+                        raise
                     outcomes: list[bool | None] = []
+                    accepted = 0
                     for candidate, diagnostic in zip(
                         candidates, result.candidate_results
                     ):
                         try:
+                            if method == "MISC":
+                                reason = misc_relevance_reason(
+                                    documents, candidate, base
+                                )
+                                if reason is not None:
+                                    diagnostic["Relevance Reason"] = reason
+                                    result.reasons.append(reason)
+                                    outcomes.append(None)
+                                    continue
+                                accepted += 1
+                                diagnostic["MISC Relevance"] = True
+                                diagnostic["Relevance Reason"] = (
+                                    "System -> MISC -> derived point base name exists; "
+                                    "relevance provisionally accepted."
+                                )
                             outcome = point_at_path(
                                 documents, candidate, base, point_name
                             )
                         except CheckingError as exc:
                             outcome = None
                             diagnostic["Error"] = str(exc)
+                            if (
+                                method == "MISC"
+                                and diagnostic["MISC Relevance"] is None
+                            ):
+                                diagnostic["Relevance Reason"] = str(exc)
                             result.errors.append(str(exc))
                         diagnostic["Schema Match"] = outcome
                         outcomes.append(outcome)
+                    if method == "MISC":
+                        result.appendix = True if accepted == len(candidates) else None
+                        result.multiple_mappings = accepted > 1
+                    if result.multiple_mappings:
+                        result.reasons.append(
+                            "Multiple different System / Equipment / "
+                            "iBMS Parameters mappings; blue review takes priority."
+                        )
+                    if method == "MISC" and result.appendix is None:
+                        result.reasons.append(
+                            "MISC candidate relevance is unresolved; Appendix is "
+                            "unknown, not False. Retain all candidates for review."
+                        )
+                        if not result.errors:
+                            result.schema = contains_point(
+                                documents, base, point_name
+                            )
+                            result.reasons.append(
+                                f"Schema result uses a full Point Name scan for "
+                                f"{point_name!r}, not a confirmed mapped-path check: "
+                                + ("found." if result.schema else "not found.")
+                            )
+                        return result
                     if outcomes and all(
                         outcome is not None and outcome == outcomes[0]
                         for outcome in outcomes
@@ -332,9 +415,10 @@ class PointChecker:
                     return result
 
             documents = self.schema_source.get_schema(building)
-            result.schema = contains_point_base(documents, base)
+            result.schema = contains_point(documents, base, point_name)
             result.reasons.append(
-                f"Appendix=False: derived point base name {base!r} "
+                f"Appendix=False: full Point Name {point_name!r} within "
+                f"derived group {base!r} "
                 + ("exists in the building schema." if result.schema else
                    "does not exist in the building schema.")
             )

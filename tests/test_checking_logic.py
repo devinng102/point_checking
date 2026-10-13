@@ -1,5 +1,6 @@
 import json
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from checking_logic import (
@@ -8,7 +9,7 @@ from checking_logic import (
     POINT_COLUMN,
     CheckingError,
     PointChecker,
-    contains_point_base,
+    contains_point,
     match_function,
 )
 
@@ -181,27 +182,37 @@ class CheckingTests(unittest.TestCase):
         self.assertFalse(result.device_review)
         self.assertEqual(result.status, "matched")
 
-    def test_failed_device_detection_found_group_is_red(self):
-        result, _ = self.check(input_row=row("APB-ACC-04-XYZ"))
-        self.assertFalse(result.appendix)
-        self.assertTrue(result.schema)
-        self.assertEqual(result.status, "unmatched")
-
-    def test_appendix_false_scan_uses_group_not_full_point_name(self):
+    def test_failed_device_detection_found_full_point_is_red(self):
         result, _ = self.check(
-            input_row=row(code="UNKNOWN"),
-            documents=[schema(point="ANOTHER-POINT", system="OTHER")],
+            input_row=row("APB-ACC-04-XYZ"),
+            documents=[schema(point="APB-ACC-04-XYZ")],
         )
         self.assertFalse(result.appendix)
         self.assertTrue(result.schema)
         self.assertEqual(result.status, "unmatched")
 
+    def test_failed_device_detection_group_alone_does_not_match(self):
+        result, _ = self.check(input_row=row("APB-ACC-04-XYZ"))
+        self.assertFalse(result.appendix)
+        self.assertFalse(result.schema)
+        self.assertEqual(result.status, "matched")
+
+    def test_appendix_false_scan_requires_full_point_name_in_group(self):
+        result, _ = self.check(
+            input_row=row(code="UNKNOWN"),
+            documents=[schema(point="ANOTHER-POINT", system="OTHER")],
+        )
+        self.assertFalse(result.appendix)
+        self.assertFalse(result.schema)
+        self.assertEqual(result.status, "matched")
+
     def test_appendix_false_scan_does_not_match_point_name_values(self):
-        self.assertFalse(contains_point_base(
+        self.assertFalse(contains_point(
             [{"OTHER": {"Thing": {"unrelated": {
                 "P": {"point_name": "APB-ACC-04"}
             }}}}],
             "APB-ACC-04",
+            "APB-ACC-04-S",
         ))
 
     def test_appendix_false_scan_searches_all_documents(self):
@@ -262,6 +273,217 @@ class CheckingTests(unittest.TestCase):
                               point="APB-ACC-04-SS")],
             input_row=row("APB-ACC-04-SS"),
         )
+        self.assertEqual(result.status, "matched")
+
+    def test_misc_missing_path_is_unknown_not_false(self):
+        for documents, missing in (
+            ([], "'FS'"),
+            ([{"FS": {}}], "'FS' -> 'MISC'"),
+            ([{"FS": {"MISC": {"OTHER": {}}}}], "'FS' -> 'MISC' -> 'APB-ACC-04'"),
+        ):
+            with self.subTest(missing=missing):
+                result, _ = self.check(
+                    records=[appendix(code=None, system="FS")],
+                    documents=documents,
+                )
+                self.assertIsNone(result.appendix)
+                self.assertFalse(result.schema)
+                self.assertEqual(result.status, "review")
+                self.assertFalse(result.errors)
+                diagnostic = result.candidate_results[0]
+                self.assertIsNone(diagnostic["MISC Relevance"])
+                self.assertIsNone(diagnostic["Schema Match"])
+                self.assertIn(missing, diagnostic["Relevance Reason"])
+                self.assertIn("full Point Name scan", " ".join(result.reasons))
+
+    def test_misc_unknown_scans_exact_point_not_group_only(self):
+        for point, expected in (("APB-ACC-04-S", True), ("APB-ACC-04-S1", False)):
+            with self.subTest(point=point):
+                result, _ = self.check(
+                    records=[appendix(code=None, system="PV")],
+                    documents=[{}, schema(point=point)],
+                )
+                self.assertIsNone(result.appendix)
+                self.assertEqual(result.schema, expected)
+                self.assertEqual(result.status, "review")
+
+    def test_misc_group_exists_missing_parameter_or_point_is_red(self):
+        for group in ({}, {"Different": {"point_name": "APB-ACC-04-S"}},
+                      {"Off/On Status": {"point_name": "APB-ACC-04-S1"}}):
+            with self.subTest(group=group):
+                result, _ = self.check(
+                    records=[appendix(code=None)],
+                    documents=[{"HVAC/W": {"MISC": {"APB-ACC-04": group}}}],
+                )
+                self.assertTrue(result.appendix)
+                self.assertFalse(result.schema)
+                self.assertEqual(result.status, "unmatched")
+                self.assertTrue(result.candidate_results[0]["MISC Relevance"])
+
+    def test_misc_relevance_searches_all_documents(self):
+        result, _ = self.check(
+            records=[appendix(code=None)],
+            documents=[{}, {"HVAC/W": {}}, schema(equipment="MISC")],
+        )
+        self.assertEqual(result.status, "matched")
+        self.assertTrue(result.appendix)
+        self.assertTrue(result.schema)
+
+    def test_misc_missing_parts_in_different_documents_do_not_form_a_path(self):
+        result, _ = self.check(
+            records=[appendix(code=None)],
+            documents=[{"HVAC/W": {}},
+                       {"OTHER": {"MISC": {"APB-ACC-04": {}}}}],
+        )
+        self.assertIsNone(result.appendix)
+        self.assertFalse(result.schema)
+        self.assertEqual(result.status, "review")
+
+    def test_misc_valid_group_does_not_hide_malformed_group_in_other_document(self):
+        result, _ = self.check(
+            records=[appendix(code=None)],
+            documents=[schema(equipment="MISC"),
+                       {"HVAC/W": {"MISC": {"APB-ACC-04": 123}}}],
+        )
+        self.assertIsNone(result.appendix)
+        self.assertIsNone(result.schema)
+        self.assertEqual(result.status, "review")
+        self.assertTrue(result.errors)
+
+    def test_misc_unknown_scan_malformed_point_does_not_become_false(self):
+        result, _ = self.check(
+            records=[appendix(code=None, system="PV")],
+            documents=[{"OTHER": {"Thing": {"APB-ACC-04": {"Status": 123}}}}],
+        )
+        self.assertIsNone(result.appendix)
+        self.assertIsNone(result.schema)
+        self.assertEqual(result.status, "review")
+        self.assertTrue(result.errors)
+
+    def test_misc_device_id_still_uses_full_point_and_unmodified_parameter(self):
+        result, _ = self.check(
+            records=[appendix(code=None)],
+            documents=[schema(point="APB-ACC-04-S01", equipment="MISC")],
+            input_row=row("APB-ACC-04-S01"),
+        )
+        self.assertTrue(result.appendix)
+        self.assertTrue(result.schema)
+        self.assertEqual(result.device_id, "01")
+        self.assertEqual(result.status, "matched")
+
+    def test_misc_multiple_unknown_candidates_are_yellow_not_blue(self):
+        result, _ = self.check(
+            records=[appendix(code=None), appendix(code=None, system="PV")],
+            documents=[],
+        )
+        self.assertEqual(result.status, "review")
+        self.assertIsNone(result.appendix)
+        self.assertFalse(result.schema)
+        self.assertEqual(len(result.candidate_results), 2)
+
+    def test_misc_mixed_relevance_remains_unknown_and_keeps_candidates(self):
+        result, _ = self.check(
+            records=[appendix(code=None), appendix(code=None, system="PV")],
+            documents=[schema(equipment="MISC")],
+        )
+        self.assertEqual(result.status, "review")
+        self.assertIsNone(result.appendix)
+        self.assertTrue(result.schema)
+        self.assertEqual(
+            [c["MISC Relevance"] for c in result.candidate_results], [True, None]
+        )
+        self.assertEqual(
+            [c["Schema Match"] for c in result.candidate_results], [True, None]
+        )
+
+    def test_misc_multiple_accepted_mappings_are_blue_even_with_unknown(self):
+        for extra in ([], [appendix(code=None, system="PV")]):
+            with self.subTest(extra=bool(extra)):
+                result, _ = self.check(
+                    records=[appendix(code=None),
+                             appendix(code=None, parameter="Different"), *extra],
+                    documents=[schema(equipment="MISC")],
+                )
+                self.assertEqual(result.status, "multiple mappings")
+                self.assertEqual(result.appendix, None if extra else True)
+                self.assertEqual(result.schema, True if extra else None)
+                self.assertEqual(len(result.candidate_results), 2 + len(extra))
+
+    def test_misc_duplicate_mapping_does_not_trigger_blue(self):
+        result, _ = self.check(
+            records=[appendix(code=None), appendix(code=None)],
+            documents=[schema(equipment="MISC")],
+        )
+        self.assertEqual(result.status, "matched")
+        self.assertEqual(len(result.candidate_results), 1)
+
+    def test_misc_query_failure_preserves_unknown_booleans_and_candidates(self):
+        result, _ = self.check(
+            records=[appendix(code=None), appendix(code=None, system="PV")],
+            error="permission denied",
+        )
+        self.assertIsNone(result.appendix)
+        self.assertIsNone(result.schema)
+        self.assertEqual(result.status, "review")
+        self.assertEqual(result.errors, ["permission denied"])
+        self.assertEqual(len(result.candidate_results), 2)
+        self.assertEqual(result.candidate_results[0]["Relevance Reason"], "permission denied")
+
+    def test_misc_malformed_relevance_path_is_unknown_not_absent(self):
+        for document in (
+            {"HVAC/W": 123},
+            {"HVAC/W": {"MISC": 123}},
+            {"HVAC/W": {"MISC": {"APB-ACC-04": 123}}},
+        ):
+            with self.subTest(document=document):
+                result, _ = self.check(records=[appendix(code=None)], documents=[document])
+                self.assertIsNone(result.appendix)
+                self.assertIsNone(result.schema)
+                self.assertEqual(result.status, "review")
+                self.assertTrue(result.errors)
+                self.assertIn("Error", result.candidate_results[0])
+
+    def test_misc_malformed_parameter_keeps_accepted_appendix(self):
+        result, _ = self.check(
+            records=[appendix(code=None)],
+            documents=[{"HVAC/W": {"MISC": {"APB-ACC-04": {"Off/On Status": 123}}}}],
+        )
+        self.assertTrue(result.appendix)
+        self.assertIsNone(result.schema)
+        self.assertEqual(result.status, "review")
+        self.assertTrue(result.errors)
+
+    def test_misc_cache_does_not_cache_building_relevance(self):
+        class BuildingSource:
+            def get_schema(self, building):
+                return [schema(equipment="MISC")] if building == "APB" else []
+
+        checker = PointChecker([appendix(code=None)], BuildingSource())
+        self.assertEqual(checker.check(row()).status, "matched")
+        self.assertEqual(checker.check(row(building="OTHER")).status, "review")
+
+    def test_outd_pv_candidate_against_local_apb_snapshot_requires_review(self):
+        path = Path(__file__).resolve().parents[1] / "src" / "building_json" / "APB.json"
+        result, _ = self.check(
+            records=[appendix("TFALM", None, "PV", "PV System",
+                              "PV System Normal / Fault Alarm")],
+            documents=json.loads(path.read_text(encoding="utf-8")),
+            input_row=row("APB-4F-SVRRM-OUTD-TFALM", "SVRRM"),
+        )
+        self.assertIsNone(result.appendix)
+        self.assertFalse(result.schema)
+        self.assertEqual(result.status, "review")
+
+    def test_rwt_group_alone_does_not_reintroduce_false_positive(self):
+        path = Path(__file__).resolve().parents[1] / "src" / "building_json" / "APB.json"
+        result, _ = self.check(
+            records=[appendix("RWT", "COT", equipment="Cooling Tower",
+                              parameter="Return Water Temperature")],
+            documents=json.loads(path.read_text(encoding="utf-8")),
+            input_row=row("APB-ACC-03-RWT"),
+        )
+        self.assertFalse(result.appendix)
+        self.assertFalse(result.schema)
         self.assertEqual(result.status, "matched")
 
     def test_same_mapping_duplicates_do_not_trigger_blue(self):
@@ -365,6 +587,54 @@ class CheckingTests(unittest.TestCase):
             with self.subTest(records=records):
                 with self.assertRaises(CheckingError):
                     PointChecker(records, MemorySource())
+
+
+class DiagramTests(unittest.TestCase):
+    def setUp(self):
+        path = Path(__file__).resolve().parents[1] / "flow.drawio"
+        self.cells = ET.parse(path).findall(".//mxCell")
+        self.by_id = {cell.attrib["id"]: cell for cell in self.cells}
+
+    def test_flow_references_and_explicit_unknown_branch(self):
+        self.assertEqual(len(self.by_id), len(self.cells))
+        for cell in self.cells:
+            for attribute in ("parent", "source", "target"):
+                if attribute in cell.attrib:
+                    self.assertIn(cell.attrib[attribute], self.by_id)
+        branch = self.by_id["misc-main-unknown-branch"]
+        self.assertEqual(branch.attrib["source"], "Au464GKHaQkNzhSAhbhp-3")
+        self.assertEqual(branch.attrib["target"], "misc-main-unknown")
+        self.assertEqual(
+            self.by_id["misc-main-unknown-export"].attrib["target"],
+            "final-resolution",
+        )
+        self.assertIn("Unknown", self.by_id["final-yellow-check"].attrib["value"])
+
+    def test_misc_subflow_nodes_fit_without_overlapping(self):
+        container = self.by_id["misc-relevance-process"].find("mxGeometry")
+        boxes = []
+        for cell in self.cells:
+            if (
+                cell.attrib.get("parent") != "misc-relevance-process"
+                or cell.attrib.get("vertex") != "1"
+            ):
+                continue
+            geometry = cell.find("mxGeometry")
+            x, y, width, height = (
+                float(geometry.attrib.get(key, 0))
+                for key in ("x", "y", "width", "height")
+            )
+            self.assertGreaterEqual(x, 0)
+            self.assertGreaterEqual(y, 0)
+            self.assertLessEqual(x + width, float(container.attrib["width"]))
+            self.assertLessEqual(y + height, float(container.attrib["height"]))
+            for other_id, ox, oy, ow, oh in boxes:
+                self.assertFalse(
+                    x < ox + ow and ox < x + width
+                    and y < oy + oh and oy < y + height,
+                    f"{cell.attrib['id']} overlaps {other_id}",
+                )
+            boxes.append((cell.attrib["id"], x, y, width, height))
 
 
 if __name__ == "__main__":

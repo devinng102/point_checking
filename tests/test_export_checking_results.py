@@ -2,6 +2,7 @@ import argparse
 import contextlib
 import csv
 import io
+import json
 import sys
 import tempfile
 import unittest
@@ -178,7 +179,7 @@ class ExportTests(unittest.TestCase):
         checker = PointChecker(records, data)
         workbook = self.workbook()
         sheet = workbook.active
-        sheet.append(["APB", "ACC", "APB-ACC-04-XYZ"])
+        sheet.append(["APB", "ACC", "APB-ACC-05-S"])
         sheet.append(["APB", "ACC", "APB-ACC-04-SWT"])
         sheet.append(["APB", "ACC", "APB-ACC-04-MULTI"])
         summary = check_workbook(workbook, checker)
@@ -193,6 +194,54 @@ class ExportTests(unittest.TestCase):
                     RESULT_COLORS[status],
                 )
         workbook.close()
+
+    def test_misc_unknown_round_trip_blank_appendix_yellow_and_preserved_source(self):
+        records = [{
+            "Function or Status Code": "TFALM",
+            "Equipment Code": None,
+            "System": "PV",
+            "Equipment": "PV System",
+            "iBMS Parameters": "PV System Normal / Fault Alarm",
+        }]
+        data = MongoSchemaSource(self.client)
+        checker = PointChecker(records, data)
+        workbook = self.workbook()
+        sheet = workbook.active
+        sheet["B2"] = "SVRRM"
+        sheet["C2"] = "APB-4F-SVRRM-OUTD-TFALM"
+        originals = [sheet.cell(2, c).value for c in range(1, 7)]
+        summary = check_workbook(workbook, checker)
+        self.assertEqual(summary["review"], 1)
+        output = self.directory / "misc_checked.xlsx"
+        save_workbook(workbook, output)
+        workbook.close()
+        actual = load_workbook(output)
+        self.addCleanup(actual.close)
+        sheet = actual.active
+        self.assertIn(sheet["G2"].value, (None, ""))
+        self.assertEqual(sheet["H2"].value, "F")
+        self.assertEqual(sheet["I2"].value, "review")
+        self.assertEqual([sheet.cell(2, c).value for c in range(1, 7)], originals)
+        for column in range(7, 7 + len(RESULT_COLUMNS)):
+            self.assertEqual(sheet.cell(2, column).fill.fgColor.rgb[-6:], "FFF2CC")
+        self.assertIn("full Point Name scan", sheet["O2"].value)
+        candidate = json.loads(sheet["P2"].value)[0]
+        self.assertIsNone(candidate["MISC Relevance"])
+        self.assertIsNone(candidate["Schema Match"])
+        self.assertIn("PV", candidate["Relevance Reason"])
+
+    def test_misc_missing_collection_exports_unknown_not_false(self):
+        data = MongoSchemaSource(self.client)
+        checker = PointChecker([{**APPENDIX[0], "Equipment Code": None}], data)
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        workbook.active["A2"] = "MISSING"
+        with contextlib.redirect_stderr(io.StringIO()) as errors:
+            summary = check_workbook(workbook, checker)
+        self.assertEqual(summary["review"], 1)
+        self.assertEqual(workbook.active["G2"].value, "")
+        self.assertEqual(workbook.active["H2"].value, "")
+        self.assertIn("does not exist", errors.getvalue())
 
     def test_existing_result_headers_are_not_overwritten(self):
         workbook = self.workbook()

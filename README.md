@@ -38,9 +38,8 @@ Unavailable formula values produce yellow review results, not invented values.
 ## Checking rules
 
 The adopted MISC fallback review decision and its rationale are recorded in
-[MISC_FALLBACK_DECISION.md](MISC_FALLBACK_DECISION.md). That decision is not yet
-implemented in the program or `flow.drawio`; the rules below describe the
-current implementation.
+[MISC_FALLBACK_DECISION.md](MISC_FALLBACK_DECISION.md). The program and
+`flow.drawio` implement option two: unresolved MISC relevance requires review.
 
 1. `Point Name` is authoritative. Split at its **last** hyphen to derive the
    Function Code and point base name. Do not read the original
@@ -64,18 +63,30 @@ current implementation.
 5. If Equipment Code matching fails, try Appendix records whose
    `Equipment Code` is missing, null or blank. Use their `System` and
    `iBMS Parameters`, with the schema equipment key fixed to `MISC`.
+   Check all building documents for `System -> MISC -> derived point base name`
+   before provisionally accepting each candidate. Missing System, MISC or group
+   means **unknown relevance**, not an unrelated candidate. Leave Appendix blank
+   if any candidate is unresolved; retain all candidates and require yellow
+   review unless two or more accepted mappings trigger blue. For unknown
+   relevance, report schema T/F from a full Point Name scan, not a mapped-path
+   check; checking errors leave schema blank. A missing parameter/point within
+   an accepted group remains Appendix=T/schema=F, not F/F.
 6. Appendix=True: check all documents at
    `System -> Equipment (or MISC) -> derived point base name -> iBMS Parameters`,
    requiring `point_name` to equal the original complete `Point Name`.
    **Do not append Device ID to `iBMS Parameters`.**
 7. Appendix=False: scan all documents in the target building collection for
    the derived point base name as a `System -> Equipment/MISC -> group` key.
-   Do not merely search for the name anywhere in a value.
+   Within that group, require a parameter object's `point_name` to equal the
+   original complete Point Name. A group alone is not a match.
 8. Distinct `System / Equipment / iBMS Parameters` mappings set a blue flag.
    Duplicate records with the same mapping do not. Retain all candidates;
    never arbitrarily choose the first one. Schema T/F is reported if all
    candidate checks agree; if they disagree or are unresolved, it is blank
-   and each candidate's result is retained.
+   and each candidate's result is retained. For MISC, count only provisionally
+   accepted mappings for blue; unresolved candidates are still retained.
+   If MISC relevance is unknown, the aggregate schema column instead reports
+   the full Point Name scan described above.
 
 The target database is the CSV's `Building & Block Code` **as given**, not a
 guessed alias. For example, `FLCB` is not automatically mapped to `FLC`.
@@ -88,7 +99,7 @@ not converted to False. Appendix-loading failure aborts the command.
 | Column | Meaning |
 |---|---|
 | `Appendix_b` | `T` for a successful mapping, `F` for no mapping, blank if unknown |
-| `enm_semantic_schema` | `T`/`F` for the appropriate path check or group scan; blank if unknown |
+| `enm_semantic_schema` | `T`/`F` for the mapped-path check or full Point Name scan; blank if unknown |
 | `Test result` | `matched`, `unmatched`, `review`, or `multiple mappings` |
 | `Derived Function Code` | Final segment of the original Point Name |
 | `Derived Point Base Name` | Point Name with its final hyphen/segment removed |
@@ -96,7 +107,7 @@ not converted to False. Appendix-loading failure aborts the command.
 | `Device ID` | Candidate suffix; does not change the schema parameter key |
 | `Appendix Match Method` | Exact Equipment Code, RegExp, MISC, or unmatched |
 | `Checking Reasons` | Checking decisions and any review/error reasons |
-| `Candidate Mappings` | JSON containing mapped fields and per-candidate schema results |
+| `Candidate Mappings` | JSON containing mapped fields and per-candidate schema results; MISC also includes `MISC Relevance` (true/null) and `Relevance Reason` |
 
 If an original column already has one of these names, a uniquely suffixed result
 column is appended instead of replacing it. Original columns and values remain
@@ -105,7 +116,7 @@ unchanged. Added result cells have the row's result background:
 | Priority | Condition | Result / background |
 |---|---|---|
 | 1 | Multiple different mappings | `multiple mappings` / blue |
-| 2 | Non-numeric Device ID candidate or checking error | `review` / yellow |
+| 2 | Unknown Appendix/schema, non-numeric Device ID candidate or checking error | `review` / yellow |
 | 3 | Appendix/schema both T or both F | `matched` / green |
 | 3 | Appendix/schema T/F or F/T | `unmatched` / red |
 
