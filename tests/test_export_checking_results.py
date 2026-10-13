@@ -21,10 +21,13 @@ from checking_logic import (
 from export_checking_results import (
     RESULT_COLORS,
     RESULT_COLUMNS,
+    REMARK_COLUMN,
     MongoSchemaSource,
     check_workbook,
     main,
     read_workbook,
+    read_remarks,
+    parse_args,
     save_workbook,
     write_text,
 )
@@ -107,6 +110,20 @@ class ExportTests(unittest.TestCase):
         sheet.append(HEADERS)
         sheet.append(["APB", "ACC", "APB-ACC-04-S", "WRONG", "WRONG", "001"])
         return workbook
+
+    def remarks_file(self, rows, headers=None):
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.append(
+            [BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN]
+            if headers is None else headers
+        )
+        for values in rows:
+            sheet.append(values)
+        path = self.directory / "previous.xlsx"
+        workbook.save(path)
+        workbook.close()
+        return path
 
     def test_preserves_original_values_styles_and_other_sheets(self):
         workbook = self.workbook()
@@ -394,7 +411,7 @@ class ExportTests(unittest.TestCase):
         output = self.directory / "checked.xlsx"
         with (
             patch("export_checking_results.parse_args", return_value=argparse.Namespace(
-                input_file=source, output=output,
+                input_file=source, output=output, remarks_from=None,
             )),
             patch.dict(sys.modules, {"mongodb_connect": SimpleNamespace(DB=self.client)}),
             contextlib.redirect_stdout(io.StringIO()) as messages,
@@ -412,12 +429,282 @@ class ExportTests(unittest.TestCase):
         source.write_bytes(b"original")
         with (
             patch("export_checking_results.parse_args", return_value=argparse.Namespace(
-                input_file=source, output=source,
+                input_file=source, output=source, remarks_from=None,
             )),
             contextlib.redirect_stderr(io.StringIO()),
         ):
             self.assertEqual(main(), 1)
         self.assertEqual(source.read_bytes(), b"original")
+
+    def test_remark_is_blank_manual_column_and_does_not_change_result(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        summary = check_workbook(workbook, self.checker)
+        sheet = workbook.active
+        column = len(HEADERS) + len(RESULT_COLUMNS) + 1
+        self.assertEqual(sheet.cell(1, column).value, REMARK_COLUMN)
+        self.assertEqual(sheet.cell(2, column).value, "")
+        self.assertEqual(summary["matched"], 1)
+        self.assertEqual(sheet["I2"].value, "matched")
+
+    def test_existing_manual_remark_is_preserved_without_duplicate_column(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        sheet = workbook.active
+        sheet["G1"] = REMARK_COLUMN
+        sheet["G2"] = 'iBMS Parameters: "Battery Voltage " vs "Battery Voltage"'
+        sheet["G2"].fill = PatternFill("solid", fgColor="123456")
+        check_workbook(workbook, self.checker)
+        self.assertEqual(sheet["G2"].value,
+                         'iBMS Parameters: "Battery Voltage " vs "Battery Voltage"')
+        self.assertEqual(sheet["G2"].fill.fgColor.rgb[-6:], "123456")
+        self.assertEqual(sum(c.value == REMARK_COLUMN for c in sheet[1]), 1)
+
+    def test_read_remarks_preserves_literal_whitespace_and_blank_rows(self):
+        text = '  iBMS Parameters: "Battery Voltage " vs "Battery Voltage"  '
+        path = self.remarks_file([
+            ["APB", "APB-ACC-04-S", text],
+            [None, None, None],
+            [None, None, ""],
+        ])
+        original = path.read_bytes()
+        self.assertEqual(read_remarks(path), {("APB", "APB-ACC-04-S"): text})
+        self.assertEqual(path.read_bytes(), original)
+
+    def test_read_remarks_csv_preserves_quotes_and_formula_like_literal_text(self):
+        path = self.directory / "notes.csv"
+        text = '=manual: "Battery Voltage " vs "Battery Voltage"'
+        with path.open("w", encoding="utf-8-sig", newline="") as handle:
+            writer = csv.writer(handle)
+            writer.writerow([BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN])
+            writer.writerow(["APB", "APB-GEN-01-BATV", text])
+        self.assertEqual(read_remarks(path),
+                         {("APB", "APB-GEN-01-BATV"): text})
+
+    def test_import_matches_building_and_full_point_not_row_order(self):
+        notes = {
+            ("APB", "APB-ACC-04-S"): "APB S note",
+            ("OTHER", "APB-ACC-04-S"): "OTHER S note",
+            ("APB", "APB-ACC-04-S1"): "Device note",
+        }
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        sheet = workbook.active
+        sheet["A2"] = "OTHER"
+        sheet.append(["APB", "ACC", "APB-ACC-04-S1"])
+        sheet.append(["APB", "ACC", "APB-ACC-04-S"])
+        with (
+            contextlib.redirect_stdout(io.StringIO()),
+            contextlib.redirect_stderr(io.StringIO()),
+        ):
+            check_workbook(workbook, self.checker, remarks=notes)
+        self.assertEqual([sheet.cell(r, 17).value for r in (2, 3, 4)],
+                         ["OTHER S note", "Device note", "APB S note"])
+
+    def test_import_is_exact_and_reports_unmatched_old_notes(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        notes = {
+            ("APB", "APB-ACC-04-S "): "Trailing-space key",
+            ("apb", "APB-ACC-04-S"): "Different building case",
+            ("APB", "APB-REMOVED-S"): "Removed point",
+        }
+        with (
+            contextlib.redirect_stdout(io.StringIO()) as messages,
+            contextlib.redirect_stderr(io.StringIO()) as warnings,
+        ):
+            check_workbook(workbook, self.checker, remarks=notes)
+        self.assertEqual(workbook.active.cell(2, 17).value, "")
+        self.assertIn("matched 0 of 3", messages.getvalue())
+        self.assertEqual(warnings.getvalue().count("no matching input row"), 3)
+
+    def test_identical_duplicate_notes_are_allowed_conflicting_notes_fail(self):
+        path = self.remarks_file([
+            ["APB", "APB-ACC-04-S", "Same"],
+            ["APB", "APB-ACC-04-S", "Same"],
+        ])
+        self.assertEqual(read_remarks(path), {("APB", "APB-ACC-04-S"): "Same"})
+        path = self.remarks_file([
+            ["APB", "APB-ACC-04-S", "First"],
+            ["APB", "APB-ACC-04-S", "Second"],
+        ])
+        with self.assertRaisesRegex(ValueError, "Conflicting Remarks"):
+            read_remarks(path)
+
+    def test_remarks_across_sheets_and_repeated_target_rows(self):
+        path = self.remarks_file([["APB", "APB-ACC-04-S", "Shared"]])
+        old = load_workbook(path)
+        second = old.create_sheet("Second")
+        second.append([BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN])
+        second.append(["APB", "APB-ACC-04-S", "Shared"])
+        notes = old.create_sheet("Notes")
+        notes.append(["Untouched"])
+        old.save(path)
+        old.close()
+        imported = read_remarks(path)
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        second = workbook.create_sheet("Second")
+        second.append(HEADERS)
+        second.append(["APB", "ACC", "APB-ACC-04-S"])
+        workbook.active.append(["APB", "ACC", "APB-ACC-04-S"])
+        with contextlib.redirect_stdout(io.StringIO()):
+            check_workbook(workbook, self.checker, remarks=imported)
+        self.assertEqual(workbook.active.cell(2, 17).value, "Shared")
+        self.assertEqual(workbook.active.cell(3, 17).value, "Shared")
+        self.assertEqual(second.cell(2, 17).value, "Shared")
+
+    def test_import_fills_existing_blank_remark_without_changing_style(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        sheet = workbook.active
+        sheet["G1"] = REMARK_COLUMN
+        sheet["G2"].fill = PatternFill("solid", fgColor="123456")
+        with contextlib.redirect_stdout(io.StringIO()):
+            check_workbook(workbook, self.checker,
+                           remarks={("APB", "APB-ACC-04-S"): "Imported"})
+        self.assertEqual(sheet["G2"].value, "Imported")
+        self.assertEqual(sheet["G2"].fill.fgColor.rgb[-6:], "123456")
+        self.assertEqual(sum(c.value == REMARK_COLUMN for c in sheet[1]), 1)
+
+    def test_existing_different_remark_cannot_be_overwritten(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        workbook.active["G1"] = REMARK_COLUMN
+        workbook.active["G2"] = "Keep me"
+        with self.assertRaisesRegex(ValueError, "conflicts with imported Remark"):
+            check_workbook(workbook, self.checker,
+                           remarks={("APB", "APB-ACC-04-S"): "New"})
+        self.assertEqual(workbook.active["G2"].value, "Keep me")
+
+    def test_bad_remark_headers_and_nonempty_note_without_key_fail(self):
+        for headers, values, message in (
+            ([BUILDING_COLUMN, POINT_COLUMN], ["APB", "P"], "No worksheet"),
+            ([POINT_COLUMN, REMARK_COLUMN], ["P", "note"], "Remark requires"),
+            ([BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN, REMARK_COLUMN],
+             ["APB", "P", "note", "note"], "duplicate required header"),
+            ([BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN],
+             [None, "P", "note"], "non-empty string"),
+        ):
+            with self.subTest(headers=headers):
+                path = self.remarks_file([values], headers)
+                with self.assertRaisesRegex(ValueError, message):
+                    read_remarks(path)
+
+    def test_formula_and_numeric_remarks_are_not_silently_converted(self):
+        for value in ('="note"', 42):
+            with self.subTest(value=value):
+                path = self.remarks_file([["APB", "P", value]])
+                with self.assertRaisesRegex(ValueError, "literal text"):
+                    read_remarks(path)
+
+    def test_remark_key_formula_without_cache_fails_explicitly(self):
+        path = self.remarks_file([['="APB"', "P", "note"]])
+        with self.assertRaisesRegex(ValueError, "without a cached value"):
+            read_remarks(path)
+
+    def test_literal_formula_like_remark_stays_text_after_round_trip(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        with contextlib.redirect_stdout(io.StringIO()):
+            check_workbook(workbook, self.checker,
+                           remarks={("APB", "APB-ACC-04-S"): "=manual text"})
+        output = self.directory / "literal.xlsx"
+        save_workbook(workbook, output)
+        actual = load_workbook(output)
+        self.addCleanup(actual.close)
+        self.assertEqual(actual.active.cell(2, 17).value, "=manual text")
+        self.assertEqual(actual.active.cell(2, 17).data_type, "s")
+
+    def test_duplicate_input_remark_headers_fail(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        workbook.active["G1"] = REMARK_COLUMN
+        workbook.active["H1"] = REMARK_COLUMN
+        with self.assertRaisesRegex(ValueError, "duplicate Remark"):
+            check_workbook(workbook, self.checker)
+
+    def test_cli_imports_manual_notes_and_recomputes_results(self):
+        source = self.directory / "source.xlsx"
+        workbook = self.workbook()
+        workbook.save(source)
+        workbook.close()
+        old = self.workbook()
+        check_workbook(old, self.checker)
+        old.active["I2"] = "unmatched"
+        old.active.cell(2, 17).value = (
+            "iBMS Parameters: On/Off Status vs Off/On Status"
+        )
+        previous = self.directory / "previous.xlsx"
+        old.save(previous)
+        old.close()
+        previous_bytes = previous.read_bytes()
+        output = self.directory / "new.xlsx"
+        with (
+            patch("export_checking_results.parse_args", return_value=argparse.Namespace(
+                input_file=source, output=output, remarks_from=previous,
+            )),
+            patch.dict(sys.modules, {"mongodb_connect": SimpleNamespace(DB=self.client)}),
+            contextlib.redirect_stdout(io.StringIO()) as messages,
+        ):
+            self.assertEqual(main(), 0)
+        self.assertIn("matched 1 of 1", messages.getvalue())
+        self.assertEqual(previous.read_bytes(), previous_bytes)
+        actual = load_workbook(output)
+        self.addCleanup(actual.close)
+        self.assertEqual(actual.active.cell(2, 17).value,
+                         "iBMS Parameters: On/Off Status vs Off/On Status")
+        self.assertEqual(actual.active["I2"].value, "matched")
+        self.assertTrue(self.client.closed)
+
+    def test_cli_remark_conflict_aborts_without_creating_output(self):
+        previous = self.remarks_file([
+            ["APB", "P", "First"], ["APB", "P", "Second"],
+        ])
+        output = self.directory / "new.xlsx"
+        with (
+            patch("export_checking_results.parse_args", return_value=argparse.Namespace(
+                input_file=self.directory / "unused.xlsx",
+                output=output, remarks_from=previous,
+            )),
+            contextlib.redirect_stderr(io.StringIO()) as errors,
+        ):
+            self.assertEqual(main(), 1)
+        self.assertFalse(output.exists())
+        self.assertIn("Conflicting Remarks", errors.getvalue())
+
+    def test_cli_existing_note_conflict_does_not_save_partial_workbook(self):
+        source = self.directory / "source.xlsx"
+        workbook = self.workbook()
+        workbook.active["G1"] = REMARK_COLUMN
+        workbook.active["G2"] = "Keep original"
+        workbook.save(source)
+        workbook.close()
+        source_bytes = source.read_bytes()
+        previous = self.remarks_file([["APB", "APB-ACC-04-S", "Other note"]])
+        output = self.directory / "new.xlsx"
+        with (
+            patch("export_checking_results.parse_args", return_value=argparse.Namespace(
+                input_file=source, output=output, remarks_from=previous,
+            )),
+            patch.dict(sys.modules, {"mongodb_connect": SimpleNamespace(DB=self.client)}),
+            contextlib.redirect_stderr(io.StringIO()) as errors,
+        ):
+            self.assertEqual(main(), 1)
+        self.assertIn("conflicts with imported Remark", errors.getvalue())
+        self.assertEqual(source.read_bytes(), source_bytes)
+        self.assertFalse(output.exists())
+        self.assertTrue(self.client.closed)
+
+    def test_cli_parses_remarks_option(self):
+        with patch.object(sys, "argv", [
+            "export_checking_results.py", "points.csv",
+            "--remarks-from", "previous.xlsx", "-o", "next.xlsx",
+        ]):
+            args = parse_args()
+        self.assertEqual(args.input_file, Path("points.csv"))
+        self.assertEqual(args.remarks_from, Path("previous.xlsx"))
+        self.assertEqual(args.output, Path("next.xlsx"))
 
 
 if __name__ == "__main__":

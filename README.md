@@ -108,6 +108,7 @@ not converted to False. Appendix-loading failure aborts the command.
 | `Appendix Match Method` | Exact Equipment Code, RegExp, MISC, or unmatched |
 | `Checking Reasons` | Checking decisions and any review/error reasons |
 | `Candidate Mappings` | JSON containing mapped fields and per-candidate schema results; MISC also includes `MISC Relevance` (true/null) and `Relevance Reason` |
+| `Remark` | Manual notes, initially blank; independent of automatic Checking Reasons and checking results |
 
 If an original column already has one of these names, a uniquely suffixed result
 column is appended instead of replacing it. Original columns and values remain
@@ -124,6 +125,38 @@ Blue overrides yellow, but all reasons are retained. The command prints counts
 for each result category and reports checking errors to stderr. It exits
 nonzero if input loading, Appendix loading, or output saving fails; row-level
 review conditions are exported rather than silently discarded.
+
+## Manual remarks and special cases
+
+Known source differences and unresolved situations are recorded in
+[SPECIAL_CASES.md](SPECIAL_CASES.md). The document is not an executable
+exception list and does not automatically fill remarks.
+
+Fill `Remark` manually in an exported workbook and save it. When checking a
+new version of the original point list, import the saved notes explicitly:
+
+```powershell
+python export_checking_results.py .\point_name_16-9-2026_v1.csv --remarks-from .\point_name_checked_v3.xlsx -o .\point_name_checked_v4.xlsx
+```
+
+`--remarks-from` accepts CSV/XLSX/XLSM with row-1 `Building & Block Code`,
+`Point Name`, and `Remark` headers. Only nonempty literal-text remarks are
+imported; formulas, invalid keys and non-text notes fail explicitly.
+Keys use the exact building and **full original Point Name** without trimming,
+case folding, device stripping, row numbers or sheet names. Reordering rows is
+safe; renamed/removed points do not inherit notes automatically. Unmatched old
+notes generate stderr warnings and remain in the untouched old file.
+Identical notes for duplicate keys are allowed; conflicting notes abort export.
+Import never reuses old checking results or changes T/F or colors.
+
+If input already has one `Remark` column, it is reused without changing its
+formatting or existing text. Import can fill empty Remark cells, but cannot
+overwrite different text. No duplicate Remark column is appended. This is the
+only explicitly requested update to original cells; other source data remains
+unchanged. Old result columns still receive the existing unique-header behavior.
+Without `--remarks-from`, existing input remarks are retained and new remark
+cells are blank. Existing notes are not automatically cleared when an issue is
+fixed; review them manually. No previous file is selected or modified implicitly.
 
 ## Tests
 
