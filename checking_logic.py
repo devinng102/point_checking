@@ -122,8 +122,8 @@ def point_at_path(
     return False
 
 
-def contains_point_base(
-    documents: Sequence[Document], point_base_name: str
+def contains_point(
+    documents: Sequence[Document], point_base_name: str, point_name: str
 ) -> bool:
     for document in documents:
         for system in document.values():
@@ -133,8 +133,14 @@ def contains_point_base(
                 if not isinstance(equipment, Mapping):
                     continue
                 if point_base_name in equipment:
-                    object_at(equipment, point_base_name)
-                    return True
+                    group = object_at(equipment, point_base_name)
+                    if group is not None:
+                        for parameter in group.values():
+                            if (
+                                isinstance(parameter, Mapping)
+                                and parameter.get("point_name") == point_name
+                            ):
+                                return True
     return False
 
 
@@ -332,11 +338,12 @@ class PointChecker:
                     return result
 
             documents = self.schema_source.get_schema(building)
-            result.schema = contains_point_base(documents, base)
+            result.schema = contains_point(documents, base, point_name)
             result.reasons.append(
-                f"Appendix=False: derived point base name {base!r} "
-                + ("exists in the building schema." if result.schema else
-                   "does not exist in the building schema.")
+                f"Appendix=False: full Point Name {point_name!r} "
+                + ("exists" if result.schema else "does not exist")
+                + f" within derived point base name group {base!r} "
+                "in the building schema."
             )
         except CheckingError as exc:
             result.errors.append(str(exc))

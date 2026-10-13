@@ -65,6 +65,10 @@ Unavailable formula values produce yellow review results, not invented values.
    **Do not append Device ID to `iBMS Parameters`.**
 7. Appendix=False: scan all documents in the target building collection for
    the derived point base name as a `System -> Equipment/MISC -> group` key.
+   Within that group, require a parameter object's `point_name` to equal the
+   complete original `Point Name`. A group containing other points is not a
+   match. For example, `APB-ACC-03` existing without `APB-ACC-03-RWT` means
+   schema=False; with Appendix=False this is matched (green).
    Do not merely search for the name anywhere in a value.
 8. Distinct `System / Equipment / iBMS Parameters` mappings set a blue flag.
    Duplicate records with the same mapping do not. Retain all candidates;
@@ -83,7 +87,7 @@ not converted to False. Appendix-loading failure aborts the command.
 | Column | Meaning |
 |---|---|
 | `Appendix_b` | `T` for a successful mapping, `F` for no mapping, blank if unknown |
-| `enm_semantic_schema` | `T`/`F` for the appropriate path check or group scan; blank if unknown |
+| `enm_semantic_schema` | `T`/`F` for a full Point Name match at the mapped path or within the derived group; blank if unknown |
 | `Test result` | `matched`, `unmatched`, `review`, or `multiple mappings` |
 | `Derived Function Code` | Final segment of the original Point Name |
 | `Derived Point Base Name` | Point Name with its final hyphen/segment removed |

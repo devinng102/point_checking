@@ -8,7 +8,7 @@ from checking_logic import (
     POINT_COLUMN,
     CheckingError,
     PointChecker,
-    contains_point_base,
+    contains_point,
     match_function,
 )
 
@@ -181,28 +181,54 @@ class CheckingTests(unittest.TestCase):
         self.assertFalse(result.device_review)
         self.assertEqual(result.status, "matched")
 
-    def test_failed_device_detection_found_group_is_red(self):
-        result, _ = self.check(input_row=row("APB-ACC-04-XYZ"))
-        self.assertFalse(result.appendix)
-        self.assertTrue(result.schema)
-        self.assertEqual(result.status, "unmatched")
-
-    def test_appendix_false_scan_uses_group_not_full_point_name(self):
+    def test_failed_device_detection_found_point_is_red(self):
         result, _ = self.check(
-            input_row=row(code="UNKNOWN"),
-            documents=[schema(point="ANOTHER-POINT", system="OTHER")],
+            input_row=row("APB-ACC-04-XYZ"),
+            documents=[schema(point="APB-ACC-04-XYZ")],
         )
         self.assertFalse(result.appendix)
         self.assertTrue(result.schema)
         self.assertEqual(result.status, "unmatched")
 
+    def test_appendix_false_existing_group_without_full_point_is_green(self):
+        result, _ = self.check(
+            input_row=row(code="UNKNOWN"),
+            documents=[schema(point="ANOTHER-POINT", system="OTHER")],
+        )
+        self.assertFalse(result.appendix)
+        self.assertFalse(result.schema)
+        self.assertEqual(result.status, "matched")
+
     def test_appendix_false_scan_does_not_match_point_name_values(self):
-        self.assertFalse(contains_point_base(
+        self.assertFalse(contains_point(
             [{"OTHER": {"Thing": {"unrelated": {
                 "P": {"point_name": "APB-ACC-04"}
             }}}}],
-            "APB-ACC-04",
+            "APB-ACC-04", "APB-ACC-04",
         ))
+
+    def test_appendix_false_same_point_under_wrong_group_does_not_match(self):
+        result, _ = self.check(
+            input_row=row(code="UNKNOWN"),
+            documents=[schema(base="WRONG-GROUP")],
+        )
+        self.assertFalse(result.schema)
+        self.assertEqual(result.status, "matched")
+
+    def test_real_apb_rwt_missing_point_in_existing_group_is_green(self):
+        path = Path(__file__).resolve().parents[1] / "src" / "building_json" / "APB.json"
+        documents = json.loads(path.read_text(encoding="utf-8"))
+        result, _ = self.check(
+            records=[appendix("RWT", code="OTHER", equipment="Other")],
+            documents=documents,
+            input_row=row("APB-ACC-03-RWT"),
+        )
+        self.assertEqual(result.match_method, "no Equipment / Function mapping")
+        self.assertFalse(result.appendix)
+        self.assertFalse(result.schema)
+        self.assertEqual(result.status, "matched")
+        self.assertIn("full Point Name 'APB-ACC-03-RWT' does not exist",
+                      result.reasons[-1])
 
     def test_appendix_false_scan_searches_all_documents(self):
         result, _ = self.check(

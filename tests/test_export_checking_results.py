@@ -2,6 +2,7 @@ import argparse
 import contextlib
 import csv
 import io
+import json
 import sys
 import tempfile
 import unittest
@@ -174,6 +175,12 @@ class ExportTests(unittest.TestCase):
             **APPENDIX[0], "Function or Status Code": "MULTI",
             "iBMS Parameters": "Other",
         }]
+        self.client.databases["APB"].collections["enm_semantic_schema"] = FakeCollection([
+            {"HVAC/W": {"Chiller": {"APB-ACC-04": {
+                "Off/On Status": {"point_name": "APB-ACC-04-S"},
+                "Unknown": {"point_name": "APB-ACC-04-XYZ"},
+            }}}}
+        ])
         data = MongoSchemaSource(self.client)
         checker = PointChecker(records, data)
         workbook = self.workbook()
@@ -193,6 +200,38 @@ class ExportTests(unittest.TestCase):
                     RESULT_COLORS[status],
                 )
         workbook.close()
+
+    def test_apb_rwt_exports_false_false_matched_green(self):
+        snapshot = (
+            Path(__file__).resolve().parents[1]
+            / "src" / "building_json" / "APB.json"
+        )
+        self.client.databases["APB"].collections["enm_semantic_schema"] = (
+            FakeCollection(json.loads(snapshot.read_text(encoding="utf-8")))
+        )
+        data = MongoSchemaSource(self.client)
+        checker = PointChecker([{
+            **APPENDIX[0],
+            "Function or Status Code": "RWT",
+            "Equipment Code": "OTHER",
+            "Equipment": "Other equipment",
+        }], data)
+        workbook = self.workbook()
+        workbook.active["C2"] = "APB-ACC-03-RWT"
+        check_workbook(workbook, checker)
+        output = self.directory / "rwt_checked.xlsx"
+        save_workbook(workbook, output)
+        workbook.close()
+        actual = load_workbook(output)
+        self.assertEqual(actual.active["G2"].value, "F")
+        self.assertEqual(actual.active["H2"].value, "F")
+        self.assertEqual(actual.active["I2"].value, "matched")
+        self.assertEqual(
+            actual.active["I2"].fill.fgColor.rgb[-6:], RESULT_COLORS["matched"]
+        )
+        self.assertEqual(actual.active["C2"].value, "APB-ACC-03-RWT")
+        self.assertEqual(actual.active["D2"].value, "WRONG")
+        actual.close()
 
     def test_existing_result_headers_are_not_overwritten(self):
         workbook = self.workbook()
