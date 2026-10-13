@@ -1,7 +1,8 @@
 # 特殊及待解決情況
 
 本文件記錄已知案例、處理決策及未解決限制。Excel 的 `Remark` 由使用者人工填寫，
-本文件不會自動產生備註，也不會作為 checking 規則或例外清單。
+`Review` 由使用者填寫覆核結論及修改背景色。本文件不會自動產生人工記錄，
+也不會作為 checking 規則或例外清單。
 以下 source 差異來自先前提供的結果及本地 schema snapshot，並非本次重新查詢 UAT。
 
 ## 案例記錄
@@ -35,8 +36,9 @@ MISC relevance: PV candidate; System/MISC/group not confirmed
 
 ## 重新導入備註
 
-1. 在本次產生的 Excel `Remark` 欄填寫備註並儲存，保留完整舊檔。
-2. 使用原始 point list 重新 checking，透過 `--remarks-from` 指定含備註的舊檔。
+1. 在本次產生的 Excel `Remark` 欄填寫備註，在 `Review` 欄填寫覆核結論及修改
+   背景色，並儲存、保留完整舊檔。只修改 Review 顏色、不填文字也可以。
+2. 使用原始 point list 重新 checking，透過 `--remarks-from` 指定含人工記錄的舊檔。
 3. 新檔以 **`Building & Block Code` + 完整 `Point Name`** exact 配對，與列號、
    worksheet 名稱、舊 T/F 或 derived code 無關；不自動 trim 或模糊匹配。
 
@@ -48,3 +50,16 @@ python export_checking_results.py .\point_name_16-9-2026_v1.csv --remarks-from .
 同一 key 有相同備註可重複；不同備註會報錯，不任選第一筆或拼接文字。
 若輸入已有 `Remark`，沿用該欄、不新增重複欄；已有不同文字時也會報錯，不覆寫。
 只允許人工文字；導入檔的非文字備註或公式會報錯。
+
+## Review 顏色保留規則
+
+- 新的 `Review` 欄預設空白、無自動背景色；原有 Review 欄沿用，不新增重複欄。
+- `--remarks-from` 會同時導入 Remark 文字及 Review 文字／直接儲存格背景色。
+  舊檔只有 Remark 也可以使用；CSV 沒有 Excel 背景色，只能保留文字。
+- Checking 欄位的結果及顏色照最新 logic 重算，不複製舊的自動顏色。
+  直接改整行或 checking 欄位的顏色，不會作為新的人工覆核顏色導入。
+- 同 key 的不同 Review 文字或背景色會報錯；已有不同人工覆核也不會被覆寫。
+  未匹配到新記錄的 Review 會提示，仍保留在舊檔。
+- 只複製 Review 的文字及直接 fill 定義，不導入條件格式規則或其他儲存格格式。
+  Theme 顏色依新檔 theme 顯示。
+- 保留下來的是上一次覆核，即使新結果已改變也不自動清除；應人工重新確認。

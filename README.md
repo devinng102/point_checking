@@ -109,10 +109,12 @@ not converted to False. Appendix-loading failure aborts the command.
 | `Checking Reasons` | Checking decisions and any review/error reasons |
 | `Candidate Mappings` | JSON containing mapped fields and per-candidate schema results; MISC also includes `MISC Relevance` (true/null) and `Relevance Reason` |
 | `Remark` | Manual notes, initially blank; independent of automatic Checking Reasons and checking results |
+| `Review` | Previous manual review text and cell background; initially blank with no automatic status color |
 
-If an original column already has one of these names, a uniquely suffixed result
-column is appended instead of replacing it. Original columns and values remain
-unchanged. Added result cells have the row's result background:
+If an original column already has an automatic checking-column name, a uniquely
+suffixed result column is appended instead of replacing it. Manual `Remark`
+and `Review` columns are reused instead, as described below.
+Added automatic result cells have the row's result background:
 
 | Priority | Condition | Result / background |
 |---|---|---|
@@ -126,37 +128,58 @@ for each result category and reports checking errors to stderr. It exits
 nonzero if input loading, Appendix loading, or output saving fails; row-level
 review conditions are exported rather than silently discarded.
 
-## Manual remarks and special cases
+## Manual remarks, review colors and special cases
 
 Known source differences and unresolved situations are recorded in
 [SPECIAL_CASES.md](SPECIAL_CASES.md). The document is not an executable
 exception list and does not automatically fill remarks.
 
-Fill `Remark` manually in an exported workbook and save it. When checking a
-new version of the original point list, import the saved notes explicitly:
+Fill `Remark` manually, and enter your review conclusion and/or choose a
+background color in **`Review`**. Save the workbook. Review cells have no
+automatic body color, so even a colored cell with no text is a manual review
+that can be imported. When checking a new version of the original point list,
+import the saved annotations explicitly using the same option:
 
 ```powershell
 python export_checking_results.py .\point_name_16-9-2026_v1.csv --remarks-from .\point_name_checked_v3.xlsx -o .\point_name_checked_v4.xlsx
 ```
 
 `--remarks-from` accepts CSV/XLSX/XLSM with row-1 `Building & Block Code`,
-`Point Name`, and `Remark` headers. Only nonempty literal-text remarks are
-imported; formulas, invalid keys and non-text notes fail explicitly.
+`Point Name`, and `Remark` and/or `Review` headers. Older Remark-only files
+remain supported. Remarks import text; reviews import text and the cell's fill
+definition. Color-only reviews are supported; blank reviews without a fill
+are ignored. CSV can carry text but cannot store Excel fills.
+Formulas, invalid keys and non-text annotations fail explicitly.
 Keys use the exact building and **full original Point Name** without trimming,
 case folding, device stripping, row numbers or sheet names. Reordering rows is
 safe; renamed/removed points do not inherit notes automatically. Unmatched old
-notes generate stderr warnings and remain in the untouched old file.
-Identical notes for duplicate keys are allowed; conflicting notes abort export.
-Import never reuses old checking results or changes T/F or colors.
+annotations generate stderr warnings and remain in the untouched old file.
+Identical annotations for duplicate keys are allowed; conflicting remarks,
+review text or review fills abort export.
+Import never reuses old checking results or changes automatic T/F or colors.
+Changing colors in automatic checking columns is not retained on regeneration;
+use `Review` for manual colors instead.
 
 If input already has one `Remark` column, it is reused without changing its
 formatting or existing text. Import can fill empty Remark cells, but cannot
-overwrite different text. No duplicate Remark column is appended. This is the
-only explicitly requested update to original cells; other source data remains
-unchanged. Old result columns still receive the existing unique-header behavior.
+overwrite different text. No duplicate Remark column is appended.
+Only the explicitly requested manual-column updates may change original cells;
+other source data remains unchanged. Existing `Review` text and fills are
+similarly retained and the
+column is reused, not duplicated. Import fills a Review cell only if it is
+empty with the default no-fill background; different existing review text or
+fill aborts export rather than overwriting it. An identical review is retained.
+Old result columns still receive the existing unique-header behavior.
 Without `--remarks-from`, existing input remarks are retained and new remark
 cells are blank. Existing notes are not automatically cleared when an issue is
-fixed; review them manually. No previous file is selected or modified implicitly.
+fixed; review them manually. Imported Review is a **previous review**, not
+evidence that you have reviewed the new checking result. No previous file is
+selected or modified implicitly.
+
+Review import copies direct cell fills, including pattern, RGB, indexed, theme/
+tint and gradient definitions. Theme-based colors render according to the
+destination workbook's theme. It does not import conditional-formatting rules,
+fonts, borders, whole-row colors or other cells' formatting.
 
 ## Tests
 
