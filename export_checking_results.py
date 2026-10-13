@@ -7,13 +7,17 @@ import sys
 import tempfile
 from collections import Counter
 from collections.abc import Sequence
+from copy import copy
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 from zipfile import BadZipFile
 
 from openpyxl import Workbook, load_workbook
 from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE, Cell
+from openpyxl.cell.rich_text import CellRichText
 from openpyxl.styles import Font, PatternFill
+from openpyxl.styles.fills import Fill
 from openpyxl.utils import get_column_letter
 from openpyxl.utils.exceptions import InvalidFileException
 from openpyxl.worksheet.worksheet import Worksheet
@@ -35,7 +39,16 @@ from checking_logic import (
 DEFAULT_INPUT = Path(__file__).with_name("point_name_16-9-2026_v1.csv")
 REQUIRED_COLUMNS = (BUILDING_COLUMN, EQUIPMENT_COLUMN, POINT_COLUMN)
 REMARK_COLUMN = "Remark"
+REVIEW_COLUMN = "Review"
 RemarkKey = tuple[str, str]
+
+
+@dataclass(frozen=True)
+class ManualReview:
+    text: str = ""
+    fill: Fill = field(default_factory=PatternFill)
+
+
 RESULT_COLUMNS = (
     "Appendix_b",
     "enm_semantic_schema",
@@ -161,33 +174,57 @@ def input_value(cell: Cell, cached: Workbook | None) -> Any:
     return value
 
 
-def read_remarks(path: Path) -> dict[RemarkKey, str]:
+def manual_text(cell: Cell, name: str) -> str:
+    if cell.value in (None, ""):
+        return ""
+    if cell.data_type == "f" or not isinstance(cell.value, (str, CellRichText)):
+        raise ValueError(
+            f"{cell.parent.title}!{cell.coordinate}: {name} must be "
+            "literal text, not a formula or another data type."
+        )
+    return str(cell.value)
+
+
+def manual_review(cell: Cell) -> ManualReview:
+    return ManualReview(manual_text(cell, REVIEW_COLUMN), copy(cell.fill))
+
+
+def read_manual_annotations(
+    path: Path,
+) -> tuple[dict[RemarkKey, str], dict[RemarkKey, ManualReview]]:
     workbook, cached = read_workbook(path)
     remarks: dict[RemarkKey, str] = {}
+    reviews: dict[RemarkKey, ManualReview] = {}
     found_sheet = False
     try:
         for sheet in workbook.worksheets:
-            if not any(cell.value == REMARK_COLUMN for cell in sheet[1]):
+            manual_columns = [
+                name for name in (REMARK_COLUMN, REVIEW_COLUMN)
+                if any(cell.value == name for cell in sheet[1])
+            ]
+            if not manual_columns:
                 continue
             columns = input_columns(
-                sheet, (BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN)
+                sheet, (BUILDING_COLUMN, POINT_COLUMN, *manual_columns)
             )
             if columns is None:
                 raise ValueError(
-                    f"{sheet.title}: Remark requires {BUILDING_COLUMN} and "
+                    f"{sheet.title}: {' / '.join(manual_columns)} requires "
+                    f"{BUILDING_COLUMN} and "
                     f"{POINT_COLUMN} headers."
                 )
             found_sheet = True
             for row in range(2, sheet.max_row + 1):
-                cell = sheet.cell(row, columns[REMARK_COLUMN])
-                remark = cell.value
-                if remark in (None, ""):
+                remark = (
+                    manual_text(sheet.cell(row, columns[REMARK_COLUMN]), REMARK_COLUMN)
+                    if REMARK_COLUMN in columns else ""
+                )
+                review = (
+                    manual_review(sheet.cell(row, columns[REVIEW_COLUMN]))
+                    if REVIEW_COLUMN in columns else ManualReview()
+                )
+                if not remark and review == ManualReview():
                     continue
-                if cell.data_type == "f" or not isinstance(remark, str):
-                    raise ValueError(
-                        f"{sheet.title}!{cell.coordinate}: Remark must be "
-                        "literal text, not a formula or another data type."
-                    )
                 key = (
                     required_text(
                         input_value(sheet.cell(row, columns[BUILDING_COLUMN]), cached),
@@ -198,22 +235,35 @@ def read_remarks(path: Path) -> dict[RemarkKey, str]:
                         f"{sheet.title}!row {row}: {POINT_COLUMN}",
                     ),
                 )
-                if key in remarks and remarks[key] != remark:
+                if remark and key in remarks and remarks[key] != remark:
                     raise ValueError(
                         f"Conflicting Remarks for {key!r} in {path}: "
                         "resolve the duplicate notes before importing."
                     )
-                remarks[key] = remark
+                if remark:
+                    remarks[key] = remark
+                if review != ManualReview():
+                    if key in reviews and reviews[key] != review:
+                        raise ValueError(
+                            f"Conflicting Reviews for {key!r} in {path}: "
+                            "resolve duplicate review text/backgrounds before importing."
+                        )
+                    reviews[key] = review
         if not found_sheet:
             raise ValueError(
-                f"No worksheet in {path} contains a Remark column with "
+                f"No worksheet in {path} contains a Remark or Review column with "
                 f"{BUILDING_COLUMN} and {POINT_COLUMN}."
             )
-        return remarks
+        return remarks, reviews
     finally:
         if cached is not None:
             cached.close()
         workbook.close()
+
+
+def read_remarks(path: Path) -> dict[RemarkKey, str]:
+    remarks, _ = read_manual_annotations(path)
+    return remarks
 
 
 def result_values(result: CheckingResult) -> tuple[str, ...]:
@@ -240,10 +290,12 @@ def check_workbook(
     checker: PointChecker,
     cached: Workbook | None = None,
     remarks: dict[RemarkKey, str] | None = None,
+    reviews: dict[RemarkKey, ManualReview] | None = None,
 ) -> Counter[Status]:
     summaries: Counter[Status] = Counter()
     checked_sheets = 0
     matched_remarks: set[RemarkKey] = set()
+    matched_reviews: set[RemarkKey] = set()
     for sheet in workbook.worksheets:
         columns = input_columns(sheet)
         if columns is None:
@@ -256,6 +308,11 @@ def check_workbook(
         ]
         if len(remark_columns) > 1:
             raise ValueError(f"{sheet.title}: duplicate Remark header.")
+        review_columns = [
+            cell.column for cell in sheet[1] if cell.value == REVIEW_COLUMN
+        ]
+        if len(review_columns) > 1:
+            raise ValueError(f"{sheet.title}: duplicate Review header.")
         used_headers = {str(cell.value) for cell in sheet[1] if cell.value is not None}
         for offset, name in enumerate(RESULT_COLUMNS, start=1):
             header = name
@@ -282,6 +339,17 @@ def check_workbook(
             cell.font = Font(bold=True)
             cell.fill = PatternFill("solid", fgColor="E0F2F1")
             sheet.column_dimensions[get_column_letter(remark_column)].width = 55
+
+        review_column = (
+            review_columns[0] if review_columns
+            else source_width + len(RESULT_COLUMNS) + (1 if remark_columns else 2)
+        )
+        if not review_columns:
+            cell = sheet.cell(1, review_column)
+            write_text(cell, REVIEW_COLUMN)
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill("solid", fgColor="E0F2F1")
+            sheet.column_dimensions[get_column_letter(review_column)].width = 26
 
         for row_number in range(2, source_height + 1):
             if all(
@@ -310,15 +378,16 @@ def check_workbook(
                     "solid", fgColor=RESULT_COLORS[result.status]
                 )
             remark_cell = sheet.cell(row_number, remark_column)
+            review_cell = sheet.cell(row_number, review_column)
             key_values = (values[BUILDING_COLUMN], values[POINT_COLUMN])
-            if remarks is not None and all(
+            if (remarks is not None or reviews is not None) and all(
                 isinstance(value, str) and value.strip() for value in key_values
             ):
                 key = (
                     required_text(key_values[0], BUILDING_COLUMN),
                     required_text(key_values[1], POINT_COLUMN),
                 )
-                if key in remarks:
+                if remarks is not None and key in remarks:
                     if (
                         remark_cell.value not in (None, "", remarks[key])
                         or remark_cell.data_type == "f"
@@ -331,6 +400,21 @@ def check_workbook(
                     if remark_cell.value in (None, ""):
                         write_text(remark_cell, remarks[key])
                     matched_remarks.add(key)
+                if reviews is not None and key in reviews:
+                    current_review = manual_review(review_cell)
+                    imported_review = reviews[key]
+                    if current_review not in (ManualReview(), imported_review):
+                        raise ValueError(
+                            f"{sheet.title}!{review_cell.coordinate}: existing "
+                            f"Review conflicts with imported Review for {key!r}; "
+                            "resolve text/backgrounds before exporting."
+                        )
+                    if current_review == ManualReview():
+                        write_text(review_cell, imported_review.text)
+                        review_cell.fill = copy(imported_review.fill)
+                    matched_reviews.add(key)
+            if not review_columns and review_cell.value is None:
+                write_text(review_cell, "")
             if not remark_columns:
                 if remark_cell.value is None:
                     write_text(remark_cell, "")
@@ -357,6 +441,17 @@ def check_workbook(
             print(
                 f"Warning: Remark for {key!r} has no matching input row; "
                 "it remains only in the previous remarks file.",
+                file=sys.stderr,
+            )
+    if reviews is not None:
+        print(
+            f"Reviews: matched {len(matched_reviews)} of {len(reviews)} "
+            "reviewed Building / Point Name keys."
+        )
+        for key in sorted(reviews.keys() - matched_reviews):
+            print(
+                f"Warning: Review for {key!r} has no matching input row; "
+                "it remains only in the previous annotations file.",
                 file=sys.stderr,
             )
     return summaries
@@ -398,8 +493,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--remarks-from", type=Path,
         help=(
-            "previous CSV/XLSX/XLSM with manual Remark text; match by exact "
-            "Building & Block Code and full Point Name"
+            "previous CSV/XLSX/XLSM with manual Remark and/or Review; preserve "
+            "Review text/background by exact Building & Block Code and full Point Name"
         ),
     )
     return parser.parse_args()
@@ -427,9 +522,9 @@ def main() -> int:
             and output.resolve() == args.remarks_from.resolve()
         ):
             raise ValueError("Output must not overwrite the remarks source.")
-        remarks = (
-            read_remarks(args.remarks_from)
-            if args.remarks_from is not None else None
+        remarks, reviews = (
+            read_manual_annotations(args.remarks_from)
+            if args.remarks_from is not None else (None, None)
         )
         workbook, cached = read_workbook(source_path)
         if not any(input_columns(sheet) for sheet in workbook.worksheets):
@@ -441,7 +536,7 @@ def main() -> int:
         client.admin.command("ping")
         data = MongoSchemaSource(client)
         checker = PointChecker(data.get_appendix(), data)
-        summaries = check_workbook(workbook, checker, cached, remarks)
+        summaries = check_workbook(workbook, checker, cached, remarks, reviews)
         save_workbook(workbook, output)
     except (
         OSError, ValueError, UnicodeError, csv.Error, BadZipFile,

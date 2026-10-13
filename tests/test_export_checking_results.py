@@ -12,7 +12,9 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from openpyxl import Workbook, load_workbook
-from openpyxl.styles import PatternFill
+from openpyxl.cell.rich_text import CellRichText, TextBlock
+from openpyxl.cell.text import InlineFont
+from openpyxl.styles import Color, GradientFill, PatternFill
 from pymongo.errors import OperationFailure
 
 from checking_logic import (
@@ -22,11 +24,14 @@ from export_checking_results import (
     RESULT_COLORS,
     RESULT_COLUMNS,
     REMARK_COLUMN,
+    REVIEW_COLUMN,
+    ManualReview,
     MongoSchemaSource,
     check_workbook,
     main,
     read_workbook,
     read_remarks,
+    read_manual_annotations,
     parse_args,
     save_workbook,
     write_text,
@@ -705,6 +710,303 @@ class ExportTests(unittest.TestCase):
         self.assertEqual(args.input_file, Path("points.csv"))
         self.assertEqual(args.remarks_from, Path("previous.xlsx"))
         self.assertEqual(args.output, Path("next.xlsx"))
+
+    def test_review_is_blank_without_automatic_result_color(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        workbook.active.append(["APB", "ACC", "APB-ACC-05-S"])
+        check_workbook(workbook, self.checker)
+        self.assertEqual(workbook.active.cell(1, 18).value, REVIEW_COLUMN)
+        for row in (2, 3):
+            self.assertEqual(workbook.active.cell(row, 18).value, "")
+            self.assertEqual(copy(workbook.active.cell(row, 18).fill), PatternFill())
+        self.assertNotEqual(copy(workbook.active["I2"].fill),
+                            copy(workbook.active["I3"].fill))
+
+    def test_existing_review_text_and_background_are_preserved(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        sheet = workbook.active
+        sheet["G1"] = REVIEW_COLUMN
+        sheet["G2"] = "Manually accepted"
+        fill = PatternFill("solid", fgColor="ABCDEF")
+        sheet["G2"].fill = fill
+        check_workbook(workbook, self.checker)
+        self.assertEqual(sheet["G2"].value, "Manually accepted")
+        self.assertEqual(copy(sheet["G2"].fill), fill)
+        self.assertEqual(sum(c.value == REVIEW_COLUMN for c in sheet[1]), 1)
+        self.assertEqual(sum(c.value == REMARK_COLUMN for c in sheet[1]), 1)
+
+    def test_review_column_positions_with_existing_manual_columns(self):
+        for names in ([REMARK_COLUMN], [REVIEW_COLUMN],
+                      [REMARK_COLUMN, REVIEW_COLUMN]):
+            with self.subTest(names=names):
+                workbook = self.workbook()
+                self.addCleanup(workbook.close)
+                for column, name in enumerate(names, start=7):
+                    workbook.active.cell(1, column).value = name
+                check_workbook(workbook, self.checker)
+                headers = [cell.value for cell in workbook.active[1]]
+                self.assertEqual(headers.count(REMARK_COLUMN), 1)
+                self.assertEqual(headers.count(REVIEW_COLUMN), 1)
+                for name in RESULT_COLUMNS:
+                    self.assertEqual(headers.count(name), 1)
+
+    def test_color_only_review_import_round_trip(self):
+        old = self.workbook()
+        check_workbook(old, self.checker)
+        fill = PatternFill("solid", fgColor="F8CECC")
+        old.active.cell(2, 18).fill = fill
+        previous = self.directory / "reviewed.xlsx"
+        old.save(previous)
+        old.close()
+        old_bytes = previous.read_bytes()
+        remarks, reviews = read_manual_annotations(previous)
+        self.assertEqual(remarks, {})
+        self.assertEqual(reviews[("APB", "APB-ACC-04-S")], ManualReview("", fill))
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        with contextlib.redirect_stdout(io.StringIO()):
+            summary = check_workbook(workbook, self.checker,
+                                     remarks=remarks, reviews=reviews)
+        output = self.directory / "review_preserved.xlsx"
+        save_workbook(workbook, output)
+        actual = load_workbook(output)
+        self.addCleanup(actual.close)
+        self.assertEqual(summary["matched"], 1)
+        self.assertIn(actual.active.cell(2, 18).value, (None, ""))
+        self.assertEqual(copy(actual.active.cell(2, 18).fill), fill)
+        self.assertEqual(actual.active["I2"].fill.fgColor.rgb[-6:], "D5E8D4")
+        self.assertEqual(previous.read_bytes(), old_bytes)
+
+    def test_review_only_file_preserves_text_and_full_fill(self):
+        for fill in (
+            PatternFill("solid", fgColor=Color(theme=4, tint=0.4)),
+            PatternFill("solid", fgColor=Color(indexed=6)),
+            GradientFill(stop=["FFFFFF", "123456"]),
+        ):
+            with self.subTest(fill=fill):
+                path = self.remarks_file(
+                    [["APB", "APB-ACC-04-S", "  Confirmed  "]],
+                    [BUILDING_COLUMN, POINT_COLUMN, REVIEW_COLUMN],
+                )
+                old = load_workbook(path)
+                old.active["C2"].fill = fill
+                old.save(path)
+                old.close()
+                remarks, reviews = read_manual_annotations(path)
+                self.assertEqual(remarks, {})
+                self.assertEqual(reviews[("APB", "APB-ACC-04-S")],
+                                 ManualReview("  Confirmed  ", fill))
+                workbook = self.workbook()
+                self.addCleanup(workbook.close)
+                with contextlib.redirect_stdout(io.StringIO()):
+                    check_workbook(workbook, self.checker, reviews=reviews)
+                self.assertEqual(workbook.active.cell(2, 18).value, "  Confirmed  ")
+                self.assertEqual(copy(workbook.active.cell(2, 18).fill), fill)
+
+    def test_reviews_match_exact_building_and_point_after_reordering(self):
+        fill = PatternFill("solid", fgColor="112233")
+        reviews = {
+            ("OTHER", "APB-ACC-04-S"): ManualReview("Other", fill),
+            ("APB", "APB-ACC-04-S1"): ManualReview("Device", fill),
+            ("APB", "APB-ACC-04-S"): ManualReview("APB", fill),
+            ("APB", "APB-REMOVED-S"): ManualReview("Removed", fill),
+        }
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        sheet = workbook.active
+        sheet["A2"] = "OTHER"
+        sheet.append(["APB", "ACC", "APB-ACC-04-S1"])
+        sheet.append(["APB", "ACC", "APB-ACC-04-S"])
+        with (
+            contextlib.redirect_stdout(io.StringIO()) as messages,
+            contextlib.redirect_stderr(io.StringIO()) as warnings,
+        ):
+            check_workbook(workbook, self.checker, reviews=reviews)
+        self.assertEqual([sheet.cell(row, 18).value for row in (2, 3, 4)],
+                         ["Other", "Device", "APB"])
+        self.assertIn("matched 3 of 4", messages.getvalue())
+        self.assertIn("Review for ('APB', 'APB-REMOVED-S')", warnings.getvalue())
+
+    def test_duplicate_review_keys_with_different_colors_fail(self):
+        path = self.remarks_file(
+            [["APB", "P", "Accepted"], ["APB", "P", "Accepted"]],
+            [BUILDING_COLUMN, POINT_COLUMN, REVIEW_COLUMN],
+        )
+        old = load_workbook(path)
+        old.active["C2"].fill = PatternFill("solid", fgColor="123456")
+        old.active["C3"].fill = PatternFill("solid", fgColor="123456")
+        old.save(path)
+        old.close()
+        self.assertEqual(len(read_manual_annotations(path)[1]), 1)
+        old = load_workbook(path)
+        old.active["C3"].fill = PatternFill("solid", fgColor="FFFFFF")
+        old.save(path)
+        old.close()
+        with self.assertRaisesRegex(ValueError, "Conflicting Reviews"):
+            read_manual_annotations(path)
+
+    def test_existing_different_review_text_or_fill_is_not_overwritten(self):
+        for text, fill in (
+            ("Keep", PatternFill()),
+            ("", PatternFill("solid", fgColor="123456")),
+        ):
+            with self.subTest(text=text):
+                workbook = self.workbook()
+                self.addCleanup(workbook.close)
+                sheet = workbook.active
+                sheet["G1"] = REVIEW_COLUMN
+                sheet["G2"] = text
+                sheet["G2"].fill = fill
+                with self.assertRaisesRegex(ValueError, "conflicts with imported Review"):
+                    check_workbook(workbook, self.checker, reviews={
+                        ("APB", "APB-ACC-04-S"): ManualReview(
+                            "Imported", PatternFill("solid", fgColor="FFFFFF")
+                        )
+                    })
+                self.assertEqual(sheet["G2"].value, text)
+                self.assertEqual(copy(sheet["G2"].fill), fill)
+
+    def test_same_review_and_empty_existing_review_import_safely(self):
+        review = ManualReview("Confirmed", PatternFill("solid", fgColor="ABCDEF"))
+        for existing in (ManualReview(), review):
+            with self.subTest(existing=existing.text):
+                workbook = self.workbook()
+                self.addCleanup(workbook.close)
+                sheet = workbook.active
+                sheet["G1"] = REVIEW_COLUMN
+                sheet["G2"] = existing.text
+                sheet["G2"].fill = copy(existing.fill)
+                with contextlib.redirect_stdout(io.StringIO()):
+                    check_workbook(workbook, self.checker, reviews={
+                        ("APB", "APB-ACC-04-S"): review
+                    })
+                self.assertEqual(sheet["G2"].value, review.text)
+                self.assertEqual(copy(sheet["G2"].fill), review.fill)
+
+    def test_invalid_review_headers_values_and_color_only_key_fail(self):
+        for value in ('="Confirmed"', 42):
+            with self.subTest(value=value):
+                path = self.remarks_file(
+                    [["APB", "P", value]],
+                    [BUILDING_COLUMN, POINT_COLUMN, REVIEW_COLUMN],
+                )
+                with self.assertRaisesRegex(ValueError, "Review must be literal text"):
+                    read_manual_annotations(path)
+        path = self.remarks_file(
+            [[None, "P", None]], [BUILDING_COLUMN, POINT_COLUMN, REVIEW_COLUMN]
+        )
+        old = load_workbook(path)
+        old.active["C2"].fill = PatternFill("solid", fgColor="123456")
+        old.save(path)
+        old.close()
+        with self.assertRaisesRegex(ValueError, "non-empty string"):
+            read_manual_annotations(path)
+        path = self.remarks_file(
+            [["APB", "P", "First", "Second"]],
+            [BUILDING_COLUMN, POINT_COLUMN, REVIEW_COLUMN, REVIEW_COLUMN],
+        )
+        with self.assertRaisesRegex(ValueError, "duplicate required header"):
+            read_manual_annotations(path)
+
+    def test_duplicate_input_review_headers_fail(self):
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        workbook.active["G1"] = REVIEW_COLUMN
+        workbook.active["H1"] = REVIEW_COLUMN
+        with self.assertRaisesRegex(ValueError, "duplicate Review"):
+            check_workbook(workbook, self.checker)
+
+    def test_cli_imports_review_color_but_recalculates_automatic_colors(self):
+        source = self.directory / "source.xlsx"
+        workbook = self.workbook()
+        workbook.save(source)
+        workbook.close()
+        old = self.workbook()
+        check_workbook(old, self.checker)
+        old.active["I2"] = "unmatched"
+        old.active["I2"].fill = PatternFill("solid", fgColor="F8CECC")
+        old.active.cell(2, 17).value = "Manual remark"
+        old.active.cell(2, 18).value = "Previously reviewed"
+        old.active.cell(2, 18).fill = PatternFill("solid", fgColor="ABCDEF")
+        previous = self.directory / "previous.xlsx"
+        old.save(previous)
+        old.close()
+        original = previous.read_bytes()
+        output = self.directory / "new.xlsx"
+        with (
+            patch("export_checking_results.parse_args", return_value=argparse.Namespace(
+                input_file=source, output=output, remarks_from=previous,
+            )),
+            patch.dict(sys.modules, {"mongodb_connect": SimpleNamespace(DB=self.client)}),
+            contextlib.redirect_stdout(io.StringIO()) as messages,
+        ):
+            self.assertEqual(main(), 0)
+        actual = load_workbook(output)
+        self.addCleanup(actual.close)
+        self.assertEqual(actual.active["I2"].value, "matched")
+        self.assertEqual(actual.active["I2"].fill.fgColor.rgb[-6:], "D5E8D4")
+        self.assertEqual(actual.active.cell(2, 17).value, "Manual remark")
+        self.assertEqual(actual.active.cell(2, 18).value, "Previously reviewed")
+        self.assertEqual(actual.active.cell(2, 18).fill.fgColor.rgb[-6:], "ABCDEF")
+        self.assertEqual(previous.read_bytes(), original)
+        self.assertIn("Reviews: matched 1 of 1", messages.getvalue())
+
+    def test_rich_manual_text_import_keeps_text_and_review_fill(self):
+        path = self.remarks_file(
+            [["APB", "APB-ACC-04-S", None, None]],
+            [BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN, REVIEW_COLUMN],
+        )
+        old = load_workbook(path)
+        rich = CellRichText(["  Manually ", TextBlock(InlineFont(b=True), "checked  ")])
+        old.active["C2"] = rich
+        old.active["D2"] = rich
+        fill = PatternFill("solid", fgColor="123456")
+        old.active["D2"].fill = fill
+        old.save(path)
+        old.close()
+        remarks, reviews = read_manual_annotations(path)
+        self.assertEqual(remarks[("APB", "APB-ACC-04-S")], "  Manually checked  ")
+        self.assertEqual(reviews[("APB", "APB-ACC-04-S")],
+                         ManualReview("  Manually checked  ", fill))
+
+    def test_csv_review_text_can_be_imported_without_colors(self):
+        path = self.directory / "reviews.csv"
+        with path.open("w", encoding="utf-8-sig", newline="") as handle:
+            writer = csv.writer(handle)
+            writer.writerow([BUILDING_COLUMN, POINT_COLUMN, REVIEW_COLUMN])
+            writer.writerow(["APB", "P", "Confirmed"])
+        remarks, reviews = read_manual_annotations(path)
+        self.assertEqual(remarks, {})
+        self.assertEqual(reviews, {("APB", "P"): ManualReview("Confirmed")})
+
+    def test_cli_review_conflict_aborts_without_changing_source_or_saving(self):
+        source = self.directory / "source.xlsx"
+        workbook = self.workbook()
+        workbook.active["G1"] = REVIEW_COLUMN
+        workbook.active["G2"] = "Current review"
+        workbook.active["G2"].fill = PatternFill("solid", fgColor="112233")
+        workbook.save(source)
+        workbook.close()
+        original = source.read_bytes()
+        previous = self.remarks_file(
+            [["APB", "APB-ACC-04-S", "Old review"]],
+            [BUILDING_COLUMN, POINT_COLUMN, REVIEW_COLUMN],
+        )
+        output = self.directory / "new.xlsx"
+        with (
+            patch("export_checking_results.parse_args", return_value=argparse.Namespace(
+                input_file=source, output=output, remarks_from=previous,
+            )),
+            patch.dict(sys.modules, {"mongodb_connect": SimpleNamespace(DB=self.client)}),
+            contextlib.redirect_stderr(io.StringIO()) as errors,
+        ):
+            self.assertEqual(main(), 1)
+        self.assertIn("conflicts with imported Review", errors.getvalue())
+        self.assertFalse(output.exists())
+        self.assertEqual(source.read_bytes(), original)
+        self.assertTrue(self.client.closed)
 
 
 if __name__ == "__main__":
