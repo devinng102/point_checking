@@ -37,6 +37,11 @@ Unavailable formula values produce yellow review results, not invented values.
 
 ## Checking rules
 
+The adopted MISC fallback review decision and its rationale are recorded in
+[MISC_FALLBACK_DECISION.md](MISC_FALLBACK_DECISION.md). That decision is not yet
+implemented in the program or `flow.drawio`; the rules below describe the
+current implementation.
+
 1. `Point Name` is authoritative. Split at its **last** hyphen to derive the
    Function Code and point base name. Do not read the original
    `Function or Status Code` or `point name (without function code)` columns
