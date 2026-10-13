@@ -29,10 +29,13 @@ from checking_logic import (
     Document,
     PointChecker,
     Status,
+    required_text,
 )
 
 DEFAULT_INPUT = Path(__file__).with_name("point_name_16-9-2026_v1.csv")
 REQUIRED_COLUMNS = (BUILDING_COLUMN, EQUIPMENT_COLUMN, POINT_COLUMN)
+REMARK_COLUMN = "Remark"
+RemarkKey = tuple[str, str]
 RESULT_COLUMNS = (
     "Appendix_b",
     "enm_semantic_schema",
@@ -129,16 +132,88 @@ def read_workbook(path: Path) -> tuple[Workbook, Workbook | None]:
     return workbook, cached
 
 
-def input_columns(sheet: Worksheet) -> dict[str, int] | None:
+def input_columns(
+    sheet: Worksheet, required: Sequence[str] = REQUIRED_COLUMNS
+) -> dict[str, int] | None:
     columns: dict[str, int] = {}
     for cell in sheet[1]:
-        if cell.value in REQUIRED_COLUMNS:
+        if cell.value in required:
             if cell.value in columns:
                 raise ValueError(
                     f"{sheet.title}: duplicate required header {cell.value!r}."
                 )
             columns[cell.value] = cell.column
-    return columns if all(name in columns for name in REQUIRED_COLUMNS) else None
+    return columns if all(name in columns for name in required) else None
+
+
+def input_value(cell: Cell, cached: Workbook | None) -> Any:
+    if cell.data_type != "f":
+        return cell.value
+    value = (
+        cached[cell.parent.title].cell(cell.row, cell.column).value
+        if cached is not None else None
+    )
+    if value is None:
+        raise CheckingError(
+            f"{cell.parent.title}!{cell.coordinate} is a formula without "
+            "a cached value; recalculate the source in Excel."
+        )
+    return value
+
+
+def read_remarks(path: Path) -> dict[RemarkKey, str]:
+    workbook, cached = read_workbook(path)
+    remarks: dict[RemarkKey, str] = {}
+    found_sheet = False
+    try:
+        for sheet in workbook.worksheets:
+            if not any(cell.value == REMARK_COLUMN for cell in sheet[1]):
+                continue
+            columns = input_columns(
+                sheet, (BUILDING_COLUMN, POINT_COLUMN, REMARK_COLUMN)
+            )
+            if columns is None:
+                raise ValueError(
+                    f"{sheet.title}: Remark requires {BUILDING_COLUMN} and "
+                    f"{POINT_COLUMN} headers."
+                )
+            found_sheet = True
+            for row in range(2, sheet.max_row + 1):
+                cell = sheet.cell(row, columns[REMARK_COLUMN])
+                remark = cell.value
+                if remark in (None, ""):
+                    continue
+                if cell.data_type == "f" or not isinstance(remark, str):
+                    raise ValueError(
+                        f"{sheet.title}!{cell.coordinate}: Remark must be "
+                        "literal text, not a formula or another data type."
+                    )
+                key = (
+                    required_text(
+                        input_value(sheet.cell(row, columns[BUILDING_COLUMN]), cached),
+                        f"{sheet.title}!row {row}: {BUILDING_COLUMN}",
+                    ),
+                    required_text(
+                        input_value(sheet.cell(row, columns[POINT_COLUMN]), cached),
+                        f"{sheet.title}!row {row}: {POINT_COLUMN}",
+                    ),
+                )
+                if key in remarks and remarks[key] != remark:
+                    raise ValueError(
+                        f"Conflicting Remarks for {key!r} in {path}: "
+                        "resolve the duplicate notes before importing."
+                    )
+                remarks[key] = remark
+        if not found_sheet:
+            raise ValueError(
+                f"No worksheet in {path} contains a Remark column with "
+                f"{BUILDING_COLUMN} and {POINT_COLUMN}."
+            )
+        return remarks
+    finally:
+        if cached is not None:
+            cached.close()
+        workbook.close()
 
 
 def result_values(result: CheckingResult) -> tuple[str, ...]:
@@ -164,9 +239,11 @@ def check_workbook(
     workbook: Workbook,
     checker: PointChecker,
     cached: Workbook | None = None,
+    remarks: dict[RemarkKey, str] | None = None,
 ) -> Counter[Status]:
     summaries: Counter[Status] = Counter()
     checked_sheets = 0
+    matched_remarks: set[RemarkKey] = set()
     for sheet in workbook.worksheets:
         columns = input_columns(sheet)
         if columns is None:
@@ -174,6 +251,11 @@ def check_workbook(
         checked_sheets += 1
         source_width = sheet.max_column
         source_height = sheet.max_row
+        remark_columns = [
+            cell.column for cell in sheet[1] if cell.value == REMARK_COLUMN
+        ]
+        if len(remark_columns) > 1:
+            raise ValueError(f"{sheet.title}: duplicate Remark header.")
         used_headers = {str(cell.value) for cell in sheet[1] if cell.value is not None}
         for offset, name in enumerate(RESULT_COLUMNS, start=1):
             header = name
@@ -190,6 +272,17 @@ def check_workbook(
                 55 if name in ("Checking Reasons", "Candidate Mappings") else 26
             )
 
+        remark_column = (
+            remark_columns[0] if remark_columns
+            else source_width + len(RESULT_COLUMNS) + 1
+        )
+        if not remark_columns:
+            cell = sheet.cell(1, remark_column)
+            write_text(cell, REMARK_COLUMN)
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill("solid", fgColor="E0F2F1")
+            sheet.column_dimensions[get_column_letter(remark_column)].width = 55
+
         for row_number in range(2, source_height + 1):
             if all(
                 sheet.cell(row_number, column).value in (None, "")
@@ -200,18 +293,11 @@ def check_workbook(
             formula_errors: list[str] = []
             for name, column in columns.items():
                 cell = sheet.cell(row_number, column)
-                value = cell.value
-                if cell.data_type == "f":
-                    value = (
-                        cached[sheet.title].cell(row_number, column).value
-                        if cached is not None else None
-                    )
-                    if value is None:
-                        formula_errors.append(
-                            f"{name} at {cell.coordinate} is a formula without "
-                            "a cached value; recalculate the source in Excel."
-                        )
-                values[name] = value
+                try:
+                    values[name] = input_value(cell, cached)
+                except CheckingError as exc:
+                    values[name] = None
+                    formula_errors.append(f"{name}: {exc}")
             result = (
                 CheckingResult(errors=formula_errors)
                 if formula_errors else checker.check(values)
@@ -221,6 +307,34 @@ def check_workbook(
                 cell = sheet.cell(row_number, source_width + offset)
                 write_text(cell, value)
                 cell.fill = PatternFill(
+                    "solid", fgColor=RESULT_COLORS[result.status]
+                )
+            remark_cell = sheet.cell(row_number, remark_column)
+            key_values = (values[BUILDING_COLUMN], values[POINT_COLUMN])
+            if remarks is not None and all(
+                isinstance(value, str) and value.strip() for value in key_values
+            ):
+                key = (
+                    required_text(key_values[0], BUILDING_COLUMN),
+                    required_text(key_values[1], POINT_COLUMN),
+                )
+                if key in remarks:
+                    if (
+                        remark_cell.value not in (None, "", remarks[key])
+                        or remark_cell.data_type == "f"
+                    ):
+                        raise ValueError(
+                            f"{sheet.title}!{remark_cell.coordinate}: existing "
+                            f"Remark conflicts with imported Remark for {key!r}; "
+                            "resolve the notes before exporting."
+                        )
+                    if remark_cell.value in (None, ""):
+                        write_text(remark_cell, remarks[key])
+                    matched_remarks.add(key)
+            if not remark_columns:
+                if remark_cell.value is None:
+                    write_text(remark_cell, "")
+                remark_cell.fill = PatternFill(
                     "solid", fgColor=RESULT_COLORS[result.status]
                 )
             for error in result.errors:
@@ -234,6 +348,17 @@ def check_workbook(
             + ", ".join(REQUIRED_COLUMNS)
             + ". Headers must be on the first row."
         )
+    if remarks is not None:
+        print(
+            f"Remarks: matched {len(matched_remarks)} of {len(remarks)} "
+            "annotated Building / Point Name keys."
+        )
+        for key in sorted(remarks.keys() - matched_remarks):
+            print(
+                f"Warning: Remark for {key!r} has no matching input row; "
+                "it remains only in the previous remarks file.",
+                file=sys.stderr,
+            )
     return summaries
 
 
@@ -270,6 +395,13 @@ def parse_args() -> argparse.Namespace:
         "-o", "--output", type=Path,
         help="new output workbook; existing files are never overwritten",
     )
+    parser.add_argument(
+        "--remarks-from", type=Path,
+        help=(
+            "previous CSV/XLSX/XLSM with manual Remark text; match by exact "
+            "Building & Block Code and full Point Name"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -290,6 +422,15 @@ def main() -> int:
             raise ValueError(f"Output must use the {suffix} extension.")
         if output.exists():
             raise FileExistsError(f"Output already exists: {output}")
+        if (
+            args.remarks_from is not None
+            and output.resolve() == args.remarks_from.resolve()
+        ):
+            raise ValueError("Output must not overwrite the remarks source.")
+        remarks = (
+            read_remarks(args.remarks_from)
+            if args.remarks_from is not None else None
+        )
         workbook, cached = read_workbook(source_path)
         if not any(input_columns(sheet) for sheet in workbook.worksheets):
             raise ValueError("Input has no worksheet with the required headers.")
@@ -300,7 +441,7 @@ def main() -> int:
         client.admin.command("ping")
         data = MongoSchemaSource(client)
         checker = PointChecker(data.get_appendix(), data)
-        summaries = check_workbook(workbook, checker, cached)
+        summaries = check_workbook(workbook, checker, cached, remarks)
         save_workbook(workbook, output)
     except (
         OSError, ValueError, UnicodeError, csv.Error, BadZipFile,
