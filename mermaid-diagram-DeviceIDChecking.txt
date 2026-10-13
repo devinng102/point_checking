@@ -1,0 +1,26 @@
+flowchart TD
+    START["完整 derived Function Code<br/>在 Appendix 匹配失敗"]
+    TRIM["移除尾部一個字元<br/>累計最多兩個字元"]
+    QUERY["以剩餘代碼查 &quot;Function or Status Code&quot;<br/>精確 → slash-token RegExp"]
+    FOUND{"找到基礎碼？"}
+    LIMIT{"已累計移除兩個字元？"}
+
+    NUMERIC{"移除的尾碼是<br/>1～2 位純數字？"}
+    ACCEPT["接受候選 Device ID<br/>保留基礎 Function Code"]
+    REVIEW["設定黃色旗標<br/>保留候選拆分及原因<br/>繼續候選 Appendix／schema checking"]:::yellow
+
+    TRUE(["Return True<br/>已找到候選基礎碼<br/>繼續 Equipment Code Checking"])
+    FALSE(["Return False<br/>Excel：&quot;Appendix_b&quot; = F<br/>仍掃描 schema 的 point base name<br/>依 T/F 判綠／紅，不固定標紅"])
+
+    START --> TRIM --> QUERY --> FOUND
+    FOUND -->|是| NUMERIC
+    FOUND -->|否| LIMIT
+    LIMIT -->|否| TRIM
+    LIMIT -->|是| FALSE
+
+    NUMERIC -->|是| ACCEPT
+    NUMERIC -->|否| REVIEW
+    ACCEPT --> TRUE
+    REVIEW --> TRUE
+
+    classDef yellow fill:#fff2cc,stroke:#d6b656,color:#000

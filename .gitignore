@@ -1,0 +1,4 @@
+.env
+__pycache__/
+*_checked.xlsx
+*_checked.xlsm
