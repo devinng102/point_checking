@@ -37,10 +37,6 @@ Unavailable formula values produce yellow review results, not invented values.
 
 ## Checking rules
 
-The adopted MISC fallback review decision and its rationale are recorded in
-[MISC_FALLBACK_DECISION.md](MISC_FALLBACK_DECISION.md). The program and
-`flow.drawio` implement option two: unresolved MISC relevance requires review.
-
 1. `Point Name` is authoritative. Split at its **last** hyphen to derive the
    Function Code and point base name. Do not read the original
    `Function or Status Code` or `point name (without function code)` columns
@@ -63,14 +59,6 @@ The adopted MISC fallback review decision and its rationale are recorded in
 5. If Equipment Code matching fails, try Appendix records whose
    `Equipment Code` is missing, null or blank. Use their `System` and
    `iBMS Parameters`, with the schema equipment key fixed to `MISC`.
-   Check all building documents for `System -> MISC -> derived point base name`
-   before provisionally accepting each candidate. Missing System, MISC or group
-   means **unknown relevance**, not an unrelated candidate. Leave Appendix blank
-   if any candidate is unresolved; retain all candidates and require yellow
-   review unless two or more accepted mappings trigger blue. For unknown
-   relevance, report schema T/F from a full Point Name scan, not a mapped-path
-   check; checking errors leave schema blank. A missing parameter/point within
-   an accepted group remains Appendix=T/schema=F, not F/F.
 6. Appendix=True: check all documents at
    `System -> Equipment (or MISC) -> derived point base name -> iBMS Parameters`,
    requiring `point_name` to equal the original complete `Point Name`.
@@ -78,18 +66,22 @@ The adopted MISC fallback review decision and its rationale are recorded in
 7. Appendix=False: scan all documents in the target building collection for
    the derived point base name as a `System -> Equipment/MISC -> group` key.
    Within that group, require a parameter object's `point_name` to equal the
-   original complete Point Name. A group alone is not a match.
+   complete original `Point Name`. A group containing other points is not a
+   match. For example, `APB-ACC-03` existing without `APB-ACC-03-RWT` means
+   schema=False; with Appendix=False this is matched (green).
+   Do not merely search for the name anywhere in a value.
 8. Distinct `System / Equipment / iBMS Parameters` mappings set a blue flag.
    Duplicate records with the same mapping do not. Retain all candidates;
    never arbitrarily choose the first one. Schema T/F is reported if all
    candidate checks agree; if they disagree or are unresolved, it is blank
-   and each candidate's result is retained. For MISC, count only provisionally
-   accepted mappings for blue; unresolved candidates are still retained.
-   If MISC relevance is unknown, the aggregate schema column instead reports
-   the full Point Name scan described above.
+   and each candidate's result is retained.
 
-The target database is the CSV's `Building & Block Code` **as given**, not a
-guessed alias. For example, `FLCB` is not automatically mapped to `FLC`.
+The target database uses the explicit mappings in
+`building_config.SCHEMA_DATABASE_ALIASES`: Excel/CSV building `FLCB` queries
+MongoDB `FLC.enm_semantic_schema`. Other building codes are used as given;
+no aliases are guessed. This changes only the database lookup, not the
+original building cell, derived group or complete Point Name. Point names
+still require exact matches; their building prefixes are not rewritten.
 Missing collections, permissions/connection failures, malformed matched
 metadata and parsing errors produce yellow review with a reason. Errors are
 not converted to False. Appendix-loading failure aborts the command.
@@ -99,7 +91,7 @@ not converted to False. Appendix-loading failure aborts the command.
 | Column | Meaning |
 |---|---|
 | `Appendix_b` | `T` for a successful mapping, `F` for no mapping, blank if unknown |
-| `enm_semantic_schema` | `T`/`F` for the mapped-path check or full Point Name scan; blank if unknown |
+| `enm_semantic_schema` | `T`/`F` for a full Point Name match at the mapped path or within the derived group; blank if unknown |
 | `Test result` | `matched`, `unmatched`, `review`, or `multiple mappings` |
 | `Derived Function Code` | Final segment of the original Point Name |
 | `Derived Point Base Name` | Point Name with its final hyphen/segment removed |
@@ -107,19 +99,16 @@ not converted to False. Appendix-loading failure aborts the command.
 | `Device ID` | Candidate suffix; does not change the schema parameter key |
 | `Appendix Match Method` | Exact Equipment Code, RegExp, MISC, or unmatched |
 | `Checking Reasons` | Checking decisions and any review/error reasons |
-| `Candidate Mappings` | JSON containing mapped fields and per-candidate schema results; MISC also includes `MISC Relevance` (true/null) and `Relevance Reason` |
-| `Remark` | Manual notes, initially blank; independent of automatic Checking Reasons and checking results |
-| `Review` | Previous manual review text and cell background; initially blank with no automatic status color |
+| `Candidate Mappings` | JSON containing mapped fields and per-candidate schema results |
 
-If an original column already has an automatic checking-column name, a uniquely
-suffixed result column is appended instead of replacing it. Manual `Remark`
-and `Review` columns are reused instead, as described below.
-Added automatic result cells have the row's result background:
+If an original column already has one of these names, a uniquely suffixed result
+column is appended instead of replacing it. Original columns and values remain
+unchanged. Added result cells have the row's result background:
 
 | Priority | Condition | Result / background |
 |---|---|---|
 | 1 | Multiple different mappings | `multiple mappings` / blue |
-| 2 | Unknown Appendix/schema, non-numeric Device ID candidate or checking error | `review` / yellow |
+| 2 | Non-numeric Device ID candidate or checking error | `review` / yellow |
 | 3 | Appendix/schema both T or both F | `matched` / green |
 | 3 | Appendix/schema T/F or F/T | `unmatched` / red |
 
@@ -127,59 +116,6 @@ Blue overrides yellow, but all reasons are retained. The command prints counts
 for each result category and reports checking errors to stderr. It exits
 nonzero if input loading, Appendix loading, or output saving fails; row-level
 review conditions are exported rather than silently discarded.
-
-## Manual remarks, review colors and special cases
-
-Known source differences and unresolved situations are recorded in
-[SPECIAL_CASES.md](SPECIAL_CASES.md). The document is not an executable
-exception list and does not automatically fill remarks.
-
-Fill `Remark` manually, and enter your review conclusion and/or choose a
-background color in **`Review`**. Save the workbook. Review cells have no
-automatic body color, so even a colored cell with no text is a manual review
-that can be imported. When checking a new version of the original point list,
-import the saved annotations explicitly using the same option:
-
-```powershell
-python export_checking_results.py .\point_name_16-9-2026_v1.csv --remarks-from .\point_name_checked_v3.xlsx -o .\point_name_checked_v4.xlsx
-```
-
-`--remarks-from` accepts CSV/XLSX/XLSM with row-1 `Building & Block Code`,
-`Point Name`, and `Remark` and/or `Review` headers. Older Remark-only files
-remain supported. Remarks import text; reviews import text and the cell's fill
-definition. Color-only reviews are supported; blank reviews without a fill
-are ignored. CSV can carry text but cannot store Excel fills.
-Formulas, invalid keys and non-text annotations fail explicitly.
-Keys use the exact building and **full original Point Name** without trimming,
-case folding, device stripping, row numbers or sheet names. Reordering rows is
-safe; renamed/removed points do not inherit notes automatically. Unmatched old
-annotations generate stderr warnings and remain in the untouched old file.
-Identical annotations for duplicate keys are allowed; conflicting remarks,
-review text or review fills abort export.
-Import never reuses old checking results or changes automatic T/F or colors.
-Changing colors in automatic checking columns is not retained on regeneration;
-use `Review` for manual colors instead.
-
-If input already has one `Remark` column, it is reused without changing its
-formatting or existing text. Import can fill empty Remark cells, but cannot
-overwrite different text. No duplicate Remark column is appended.
-Only the explicitly requested manual-column updates may change original cells;
-other source data remains unchanged. Existing `Review` text and fills are
-similarly retained and the
-column is reused, not duplicated. Import fills a Review cell only if it is
-empty with the default no-fill background; different existing review text or
-fill aborts export rather than overwriting it. An identical review is retained.
-Old result columns still receive the existing unique-header behavior.
-Without `--remarks-from`, existing input remarks are retained and new remark
-cells are blank. Existing notes are not automatically cleared when an issue is
-fixed; review them manually. Imported Review is a **previous review**, not
-evidence that you have reviewed the new checking result. No previous file is
-selected or modified implicitly.
-
-Review import copies direct cell fills, including pattern, RGB, indexed, theme/
-tint and gradient definitions. Theme-based colors render according to the
-destination workbook's theme. It does not import conditional-formatting rules,
-fonts, borders, whole-row colors or other cells' formatting.
 
 ## Tests
 
