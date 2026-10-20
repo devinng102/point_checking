@@ -17,3 +17,9 @@
     unmatched: 1277
     review: 4185
     multiple mappings: 0
+
+#### point_name_checked_v9
+    matched: 11672
+    unmatched: 1624
+    review: 3345
+    multiple mappings: 0
