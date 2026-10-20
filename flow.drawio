@@ -322,7 +322,7 @@
         <mxCell id="E50qB_bewiRri_-YFIzX-77" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="E50qB_bewiRri_-YFIzX-70">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="E50qB_bewiRri_-YFIzX-68" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Step 1:&lt;br&gt;Find the target building according to the &lt;font color=&quot;#26a69a&quot;&gt;&quot;Building &amp; Block Code&quot;&lt;/font&gt;." vertex="1">
+        <mxCell id="E50qB_bewiRri_-YFIzX-68" parent="E50qB_bewiRri_-YFIzX-61" style="rounded=0;whiteSpace=wrap;html=1;" value="Step 1: Resolve schema database.&lt;br&gt;Excel/CSV &quot;FLCB&quot; -&amp;gt; MongoDB &quot;FLC&quot;.&lt;br&gt;Other codes unchanged. Never rewrite source cells or Point Name." vertex="1">
           <mxGeometry height="64.41176470588235" width="206.56" x="204.92" y="204.91529411764705" as="geometry" />
         </mxCell>
         <mxCell id="E50qB_bewiRri_-YFIzX-78" edge="1" parent="E50qB_bewiRri_-YFIzX-61" source="E50qB_bewiRri_-YFIzX-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="E50qB_bewiRri_-YFIzX-73">
@@ -523,6 +523,9 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points"><mxPoint x="1190" y="1530" /><mxPoint x="1190" y="941" /></Array>
           </mxGeometry>
+        </mxCell>
+        <mxCell id="schema-alias-note" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=12;" value="&lt;b&gt;Schema database lookup: confirmed alias&lt;/b&gt;&lt;br&gt;ALL mapped-path checks and fallback scans use:&lt;br&gt;Excel/CSV &quot;FLCB&quot; -&amp;gt; DB &quot;FLC&quot;, collection &quot;enm_semantic_schema&quot;.&lt;br&gt;Other Building codes are used as given; no guessed aliases.&lt;br&gt;This applies wherever the diagram selects DB[Building].&lt;br&gt;Do NOT rewrite Building cells, derived groups or full Point Names." vertex="1">
+          <mxGeometry height="150" width="700" x="-800" y="-880" as="geometry" />
         </mxCell>
         <mxCell id="terminology-legend" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=12;" value="&lt;b&gt;Quoted names and text-color legend&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#ab47bc&quot;&gt;&quot;MASTER&quot;, &quot;appendix_b&quot;, &quot;enm_semantic_schema&quot;&lt;/font&gt;: database / collection names.&lt;br&gt;&lt;font color=&quot;#26a69a&quot;&gt;&quot;Equipment Code&quot;, &quot;Equipment&quot;, &quot;Point Name&quot;&lt;/font&gt;: exact source-field names; Code and mapped name are DIFFERENT fields.&lt;br&gt;&lt;font color=&quot;#fb8c00&quot;&gt;&quot;derived Function Code&quot;, &quot;derived point base name&quot;, &quot;Device ID&quot;&lt;/font&gt;: checking-only derived values; never overwrite original Excel cells.&lt;br&gt;&lt;font color=&quot;#78909c&quot;&gt;&quot;MISC&quot;&lt;/font&gt;: literal schema hierarchy key.&lt;br&gt;TEXT colors identify names; result BACKGROUND colors indicate green / red / yellow / blue status." vertex="1">
           <mxGeometry height="200" width="700" x="-800" y="-700" as="geometry" />

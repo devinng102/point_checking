@@ -76,8 +76,12 @@ Unavailable formula values produce yellow review results, not invented values.
    candidate checks agree; if they disagree or are unresolved, it is blank
    and each candidate's result is retained.
 
-The target database is the CSV's `Building & Block Code` **as given**, not a
-guessed alias. For example, `FLCB` is not automatically mapped to `FLC`.
+The target database uses the explicit mappings in
+`building_config.SCHEMA_DATABASE_ALIASES`: Excel/CSV building `FLCB` queries
+MongoDB `FLC.enm_semantic_schema`. Other building codes are used as given;
+no aliases are guessed. This changes only the database lookup, not the
+original building cell, derived group or complete Point Name. Point names
+still require exact matches; their building prefixes are not rewritten.
 Missing collections, permissions/connection failures, malformed matched
 metadata and parsing errors produce yellow review with a reason. Errors are
 not converted to False. Appendix-loading failure aborts the command.

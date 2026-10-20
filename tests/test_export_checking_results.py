@@ -108,6 +108,50 @@ class ExportTests(unittest.TestCase):
         sheet.append(["APB", "ACC", "APB-ACC-04-S", "WRONG", "WRONG", "001"])
         return workbook
 
+    def test_flcb_queries_flc_without_rewriting_input_or_point_name(self):
+        point = "FLCB-ACC-01-S"
+        documents = [{
+            "HVAC/W": {"Chiller": {"FLCB-ACC-01": {
+                "Off/On Status": {"point_name": point},
+            }}},
+        }]
+        collection = FakeCollection(documents)
+        client = FakeClient({
+            "FLC": FakeDatabase({"enm_semantic_schema": collection}),
+            "FLCB": FakeDatabase({}),
+        })
+        source = MongoSchemaSource(client)
+        checker = PointChecker(APPENDIX, source)
+        workbook = self.workbook()
+        self.addCleanup(workbook.close)
+        sheet = workbook.active
+        sheet["A2"] = "FLCB"
+        sheet["C2"] = point
+        summary = check_workbook(workbook, checker)
+        self.assertEqual(summary["matched"], 1)
+        self.assertEqual(sheet["A2"].value, "FLCB")
+        self.assertEqual(sheet["C2"].value, point)
+        self.assertEqual(sheet["G2"].value, "T")
+        self.assertEqual(sheet["H2"].value, "T")
+        self.assertEqual(sheet["K2"].value, "FLCB-ACC-01")
+        self.assertEqual(source.get_schema("FLCB"), documents)
+        self.assertEqual(source.get_schema("FLC"), documents)
+        self.assertEqual(collection.reads, 1)
+
+    def test_flcb_alias_failures_report_actual_database_and_are_cached(self):
+        source = MongoSchemaSource(FakeClient())
+        for building in ("FLCB", "FLC"):
+            with self.assertRaisesRegex(CheckingError, r"FLC\.enm_semantic_schema"):
+                source.get_schema(building)
+        self.assertEqual(list(source._cache), ["FLC"])
+
+    def test_unconfigured_building_alias_is_not_guessed(self):
+        source = MongoSchemaSource(FakeClient())
+        for building in ("flcb", "FLCB ", "UNKNOWN"):
+            with self.subTest(building=building):
+                with self.assertRaises(CheckingError):
+                    source.get_schema(building)
+
     def test_preserves_original_values_styles_and_other_sheets(self):
         workbook = self.workbook()
         sheet = workbook.active

@@ -20,6 +20,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
+from building_config import SCHEMA_DATABASE_ALIASES
 from checking_logic import (
     BUILDING_COLUMN,
     EQUIPMENT_COLUMN,
@@ -78,6 +79,7 @@ class MongoSchemaSource:
         return self._read("MASTER", "appendix_b")
 
     def get_schema(self, building: str) -> Sequence[Document]:
+        building = SCHEMA_DATABASE_ALIASES.get(building, building)
         if building not in self._cache:
             try:
                 self._cache[building] = self._read(
