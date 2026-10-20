@@ -7,16 +7,18 @@
 
 ## 案例記錄
 
-| 編號 | 完整 Point Name／情況 | 狀態 | 說明及後續處理 |
-|---|---|---|---|
-| SC-001 | `APB-CHWP-01-S` | Source 差異已確認；不改 matching logic | Appendix B 的 `"iBMS Parameters"` 是 `"On/Off Status"`，schema key 是 `"Off/On Status"`。依 exact key 規則為 T/F、unmatched；須統一 source 後重新 checking，不新增自動別名。 |
-| SC-002 | `APB-GEN-01-BATV` | 待確認 source 修正 | Appendix B 的 `"Battery Voltage "` 有尾隨空格，schema key 是 `"Battery Voltage"`。依 exact key 規則為 T/F、unmatched；不自動 trim parameter key，以免掩蓋 source 差異。 |
-| SC-003 | `APB-ACC-03-RWT` | Checking logic 已修正 | `APB-ACC-03` 群組存在，不代表 RWT point 存在。Appendix=F 時需在 derived group 下比對完整 Point Name；此已知案例應為 F/F、matched。 |
-| SC-004 | `APB-4F-SVRRM-OUTD-TFALM` | 方案二已實作；候選關聯待人工確認 | 無 Equipment Code 的 PV／TFALM 記錄不足以證明與 SVRRM 相關。若缺少候選 System／MISC／同名群組，Appendix 留空；完整 Point Name 掃描若為 F，仍為黃色 review，而不是 T/F 紅色或 F/F 綠色。 |
-| SC-005 | 合法 MISC 的 System／MISC／整個群組缺失 | 待獨立對應資料 | 無法單靠 schema 區分「合法資料被刪除」與「候選不相關」。方案二要求黃色覆核；未新增推測式 System 對應。 |
-| SC-006 | MISC 群組被放錯 System，但 parameter／point 恰好匹配 | 已知限制，待獨立對應資料 | 現行 schema 路徑檢查可能仍為 T/T，不能獨立驗證分類正確性。需要 schema 以外的可信設備／System 對應才能完整解決。 |
-| SC-007 | Function Code 去掉 1–2 字元後才匹配，但 suffix 不是 ASCII 數字 | 已實作；需人工覆核 | 例如 `SWT` 若只能拆成 `S` + `WT`，保留候選檢查結果，但標黃色。若原始 `SWT` 已匹配則不拆，不能把所有 SWT 都視為異常。 |
-| SC-008 | 多個不同 System／Equipment／`"iBMS Parameters"` 映射 | 已實作；需人工覆核 | 保留候選，標藍，不任選第一筆；MISC 只計已暫接受關聯的映射。藍色優先於黃色，但兩種覆核原因都保留。 |
+
+| 編號   | 完整 Point Name／情況                                           | 狀態                                   | 說明及後續處理                                                                                                                                                                          |
+| ------ | --------------------------------------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SC-001 | `APB-CHWP-01-S`                                                 | Source 差異已確認；不改 matching logic | Appendix B 的`"iBMS Parameters"` 是 `"On/Off Status"`，schema key 是 `"Off/On Status"`。依 exact key 規則為 T/F、unmatched；須統一 source 後重新 checking，不新增自動別名。             |
+| SC-002 | `APB-GEN-01-BATV`                                               | 待確認 source 修正                     | Appendix B 的`"Battery Voltage "` 有尾隨空格，schema key 是 `"Battery Voltage"`。依 exact key 規則為 T/F、unmatched；不自動 trim parameter key，以免掩蓋 source 差異。                  |
+| SC-003 | `APB-ACC-03-RWT`                                                | Checking logic 已修正                  | `APB-ACC-03` 群組存在，不代表 RWT point 存在。Appendix=F 時需在 derived group 下比對完整 Point Name；此已知案例應為 F/F、matched。                                                      |
+| SC-004 | `APB-4F-SVRRM-OUTD-TFALM`                                       | 方案二已實作；候選關聯待人工確認       | 無 Equipment Code 的 PV／TFALM 記錄不足以證明與 SVRRM 相關。若缺少候選 System／MISC／同名群組，Appendix 留空；完整 Point Name 掃描若為 F，仍為黃色 review，而不是 T/F 紅色或 F/F 綠色。 |
+| SC-005 | 合法 MISC 的 System／MISC／整個群組缺失                         | 待獨立對應資料                         | 無法單靠 schema 區分「合法資料被刪除」與「候選不相關」。方案二要求黃色覆核；未新增推測式 System 對應。                                                                                  |
+| SC-006 | MISC 群組被放錯 System，但 parameter／point 恰好匹配            | 已知限制，待獨立對應資料               | 現行 schema 路徑檢查可能仍為 T/T，不能獨立驗證分類正確性。需要 schema 以外的可信設備／System 對應才能完整解決。                                                                         |
+| SC-007 | Function Code 去掉 1–2 字元後才匹配，但 suffix 不是 ASCII 數字 | 已實作；需人工覆核                     | 例如`SWT` 若只能拆成 `S` + `WT`，保留候選檢查結果，但標黃色。若原始 `SWT` 已匹配則不拆，不能把所有 SWT 都視為異常。                                                                     |
+| SC-008 | 多個不同 System／Equipment／`"iBMS Parameters"` 映射            | 已實作；需人工覆核                     | 保留候選，標藍，不任選第一筆；MISC 只計已暫接受關聯的映射。藍色優先於黃色，但兩種覆核原因都保留。                                                                                       |
+| SC-009 | Building "FLCB" in excel = "FLC" in MongoDB | 已實作 |標綠
 
 詳細 MISC 決策原因見 [MISC_FALLBACK_DECISION.md](MISC_FALLBACK_DECISION.md)。
 「已修正」描述程式規則，不代表已修正 MongoDB source 或重產所有舊 Excel。
