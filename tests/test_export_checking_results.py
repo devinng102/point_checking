@@ -149,7 +149,7 @@ class ExportTests(unittest.TestCase):
         aliases = {
             "FLCB": "FLC", "HB": "HABB", "HKO": "HKOHQ",
             "KTESC": "KLTESC", "MTCH": "MTCC", "SEKSSWK": "SEKSS(WK)",
-            "TIT": "TAIT", "YLDOB": "YLDOB-010",
+            "TIT": "TAIT", "YLDOB": "YLDOB-010", "KCLB": "KCMCB",
         }
         for excel, database in aliases.items():
             with self.subTest(excel=excel, database=database):

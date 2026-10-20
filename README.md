@@ -89,6 +89,7 @@ The target database uses the explicit mappings in
 | `SEKSSWK` | `SEKSS(WK)` |
 | `TIT` | `TAIT` |
 | `YLDOB` | `YLDOB-010` |
+| `KCLB` | `KCMCB` |
 
 Each database is queried for `enm_semantic_schema`. Other building codes,
 including canonical MongoDB names, are used as given; no aliases are guessed.

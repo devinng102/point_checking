@@ -9,6 +9,7 @@ SCHEMA_DATABASE_ALIASES = {
     "SEKSSWK": "SEKSS(WK)",
     "TIT": "TAIT",
     "YLDOB": "YLDOB-010",
+    "KCLB": "KCMCB",
 }
 
 MASTER_BUILDING = [
