@@ -145,6 +145,49 @@ class ExportTests(unittest.TestCase):
                 source.get_schema(building)
         self.assertEqual(list(source._cache), ["FLC"])
 
+    def test_confirmed_building_aliases_preserve_excel_values_and_share_cache(self):
+        aliases = {
+            "FLCB": "FLC", "HB": "HABB", "HKO": "HKOHQ",
+            "KTESC": "KLTESC", "MTCH": "MTCC", "SEKSSWK": "SEKSS(WK)",
+            "TIT": "TAIT", "YLDOB": "YLDOB-010",
+        }
+        for excel, database in aliases.items():
+            with self.subTest(excel=excel, database=database):
+                base = f"{excel}-ACC-01"
+                point = f"{base}-S"
+                documents = [{
+                    "HVAC/W": {"Chiller": {
+                        base: {"Off/On Status": {"point_name": point}}
+                    }}
+                }]
+                collection = FakeCollection(documents)
+                source = MongoSchemaSource(FakeClient({
+                    database: FakeDatabase({"enm_semantic_schema": collection}),
+                    excel: FakeDatabase({}),
+                }))
+                workbook = self.workbook()
+                self.addCleanup(workbook.close)
+                sheet = workbook.active
+                sheet["A2"] = excel
+                sheet["C2"] = point
+                checker = PointChecker(APPENDIX, source)
+                summary = check_workbook(workbook, checker)
+                self.assertEqual(summary["matched"], 1)
+                self.assertEqual(sheet["A2"].value, excel)
+                self.assertEqual(sheet["C2"].value, point)
+                self.assertEqual(sheet["K2"].value, base)
+                self.assertEqual(source.get_schema(database), documents)
+                self.assertEqual(source.get_schema(excel), documents)
+                self.assertEqual(collection.reads, 1)
+
+    def test_reference_commented_buildings_are_not_disabled(self):
+        for building in ("EMSDN", "TLVL", "WKGO", "QGO"):
+            with self.subTest(building=building):
+                source = MongoSchemaSource(FakeClient({
+                    building: FakeDatabase({"enm_semantic_schema": FakeCollection([])})
+                }))
+                self.assertEqual(source.get_schema(building), [])
+
     def test_unconfigured_building_alias_is_not_guessed(self):
         source = MongoSchemaSource(FakeClient())
         for building in ("flcb", "FLCB ", "UNKNOWN"):

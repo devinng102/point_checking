@@ -77,9 +77,23 @@ Unavailable formula values produce yellow review results, not invented values.
    and each candidate's result is retained.
 
 The target database uses the explicit mappings in
-`building_config.SCHEMA_DATABASE_ALIASES`: Excel/CSV building `FLCB` queries
-MongoDB `FLC.enm_semantic_schema`. Other building codes are used as given;
-no aliases are guessed. This changes only the database lookup, not the
+`building_config.SCHEMA_DATABASE_ALIASES`:
+
+| Excel/CSV Building | MongoDB database |
+|---|---|
+| `FLCB` | `FLC` |
+| `HB` | `HABB` |
+| `HKO` | `HKOHQ` |
+| `KTESC` | `KLTESC` |
+| `MTCH` | `MTCC` |
+| `SEKSSWK` | `SEKSS(WK)` |
+| `TIT` | `TAIT` |
+| `YLDOB` | `YLDOB-010` |
+
+Each database is queried for `enm_semantic_schema`. Other building codes,
+including canonical MongoDB names, are used as given; no aliases are guessed.
+Commented-out entries in the reference image do not disable buildings.
+This changes only the database lookup, not the
 original building cell, derived group or complete Point Name. Point names
 still require exact matches; their building prefixes are not rewritten.
 Missing collections, permissions/connection failures, malformed matched

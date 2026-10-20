@@ -1,6 +1,15 @@
 """Building names shared by the MongoDB import and export scripts."""
 
-SCHEMA_DATABASE_ALIASES = {"FLCB": "FLC"}
+SCHEMA_DATABASE_ALIASES = {
+    "FLCB": "FLC",
+    "HB": "HABB",
+    "HKO": "HKOHQ",
+    "KTESC": "KLTESC",
+    "MTCH": "MTCC",
+    "SEKSSWK": "SEKSS(WK)",
+    "TIT": "TAIT",
+    "YLDOB": "YLDOB-010",
+}
 
 MASTER_BUILDING = [
     "APB",
