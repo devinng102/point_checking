@@ -39,4 +39,5 @@ MASTER_BUILDING = [
     "YLDOB-010",
     "QGO",
     "KCMCB",
+    "PDGLD"
 ]
